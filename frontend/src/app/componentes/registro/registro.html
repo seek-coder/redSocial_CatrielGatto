@@ -1,0 +1,176 @@
+<section class="registro-container">
+  <div class="registro-wrapper">
+
+    <div class="registro-header">
+      <div class="header-icon">📝</div>
+      <p class="header-subtitle">// Crear cuenta</p>
+      <h1 class="header-title">REGISTRO</h1>
+    </div>
+
+    <div class="glass-card registro-card">
+
+      <form [formGroup]="registroForm" (ngSubmit)="onSubmit()" id="registro-form">
+
+        <div class="fila">
+          <div class="campo">
+            <label for="reg-nombre" class="label">Nombre</label>
+            <input id="reg-nombre" type="text" formControlName="nombre"
+                   placeholder="Juan" class="input-field" autocomplete="given-name">
+            @if (nombre?.invalid && nombre?.touched) {
+              <p class="error-msg">
+                @if (nombre?.errors?.['required']) { El nombre es obligatorio. }
+                @else if (nombre?.errors?.['minlength']) { Mínimo 2 caracteres. }
+              </p>
+            }
+          </div>
+
+          <div class="campo">
+            <label for="reg-apellido" class="label">Apellido</label>
+            <input id="reg-apellido" type="text" formControlName="apellido"
+                   placeholder="Pérez" class="input-field" autocomplete="family-name">
+            @if (apellido?.invalid && apellido?.touched) {
+              <p class="error-msg">
+                @if (apellido?.errors?.['required']) { El apellido es obligatorio. }
+                @else if (apellido?.errors?.['minlength']) { Mínimo 2 caracteres. }
+              </p>
+            }
+          </div>
+        </div>
+
+        <div class="campo">
+          <label for="reg-correo" class="label">Correo electrónico</label>
+          <input id="reg-correo" type="email" formControlName="correo"
+                 placeholder="juan@ejemplo.com" class="input-field" autocomplete="email">
+          @if (correo?.invalid && correo?.touched) {
+            <p class="error-msg">
+              @if (correo?.errors?.['required']) { El correo es obligatorio. }
+              @else if (correo?.errors?.['email']) { Formato de correo inválido. }
+            </p>
+          }
+        </div>
+
+        <div class="campo">
+          <label for="reg-usuario" class="label">Nombre de usuario</label>
+          <input id="reg-usuario" type="text" formControlName="nombreUsuario"
+                 placeholder="juan_perez" class="input-field" autocomplete="username">
+          @if (nombreUsuario?.invalid && nombreUsuario?.touched) {
+            <p class="error-msg">
+              @if (nombreUsuario?.errors?.['required']) { El nombre de usuario es obligatorio. }
+              @else if (nombreUsuario?.errors?.['minlength']) { Mínimo 3 caracteres. }
+              @else if (nombreUsuario?.errors?.['pattern']) { Solo letras, números y guiones bajos. }
+            </p>
+          }
+        </div>
+
+        <div class="fila">
+          <div class="campo">
+            <label for="reg-password" class="label">Contraseña</label>
+            <input id="reg-password" type="password" formControlName="password"
+                   placeholder="••••••••" class="input-field" autocomplete="new-password">
+            @if (password?.invalid && password?.touched) {
+              <p class="error-msg">
+                @if (password?.errors?.['required']) { La contraseña es obligatoria. }
+                @else if (password?.errors?.['minlength']) { Mínimo 8 caracteres. }
+                @else if (password?.errors?.['pattern']) { Debe tener al menos una mayúscula y un número. }
+              </p>
+            }
+          </div>
+
+          <div class="campo">
+            <label for="reg-repetir" class="label">Repetir contraseña</label>
+            <input id="reg-repetir" type="password" formControlName="repetirPassword"
+                   placeholder="••••••••" class="input-field" autocomplete="new-password">
+            @if (repetirPassword?.touched && registroForm.errors?.['passwordsDistintas']) {
+              <p class="error-msg">Las contraseñas no coinciden.</p>
+            }
+          </div>
+        </div>
+
+        <div class="fila">
+          <div class="campo">
+            <label for="reg-fecha" class="label">Fecha de nacimiento</label>
+            <input id="reg-fecha" type="date" formControlName="fechaNacimiento"
+                   class="input-field">
+            @if (fechaNacimiento?.invalid && fechaNacimiento?.touched) {
+              <p class="error-msg">La fecha de nacimiento es obligatoria.</p>
+            }
+          </div>
+
+          <div class="campo">
+            <label for="reg-imagen" class="label">Imagen de perfil</label>
+            <div class="file-upload" id="reg-imagen-wrapper">
+              <label for="reg-imagen" class="file-label">
+                @if (previewImagen()) {
+                  <img [src]="previewImagen()" alt="Preview" class="preview-img">
+                } @else {
+                  <span class="material-symbols-outlined">add_photo_alternate</span>
+                  <span class="file-text">Elegir imagen</span>
+                }
+              </label>
+              <input id="reg-imagen" type="file" accept="image/*"
+                     (change)="onArchivoSeleccionado($event)" class="file-input">
+            </div>
+          </div>
+        </div>
+
+        <div class="campo">
+          <label for="reg-descripcion" class="label">
+            Descripción breve
+            @if (descripcion?.value) {
+              <span class="char-count">({{ descripcion?.value?.length }}/200)</span>
+            }
+          </label>
+          <textarea id="reg-descripcion" formControlName="descripcion"
+                    placeholder="Contanos algo sobre vos..."
+                    class="input-field textarea" rows="3"></textarea>
+          @if (descripcion?.invalid && descripcion?.touched) {
+            <p class="error-msg">
+              @if (descripcion?.errors?.['required']) { La descripción es obligatoria. }
+              @else if (descripcion?.errors?.['maxlength']) { Máximo 200 caracteres. }
+            </p>
+          }
+        </div>
+
+        <button type="submit" id="registro-submit"
+                class="btn-green btn-full"
+                [disabled]="registroForm.invalid || cargando()">
+          @if (cargando()) {
+            REGISTRANDO...
+          } @else {
+            CREAR CUENTA
+          }
+        </button>
+      </form>
+
+      <div class="separador">
+        <div class="linea"></div>
+        <span>o</span>
+        <div class="linea"></div>
+      </div>
+
+      <p class="link-login">
+        ¿Ya tenés cuenta?
+        <a routerLink="/login" id="link-a-login">Ingresar →</a>
+      </p>
+    </div>
+  </div>
+</section>
+
+@if (mostrarModal()) {
+  <div class="modal-overlay" (click)="cerrarModal()" id="modal-registro">
+    <div class="glass-card modal-contenido"
+         [class.modal-exito]="tipoModal() === 'exito'"
+         (click)="$event.stopPropagation()">
+      <div class="modal-icono">
+        @if (tipoModal() === 'exito') { ✅ } @else { ⚠️ }
+      </div>
+      <h3 class="modal-titulo">
+        @if (tipoModal() === 'exito') { LISTO } @else { ERROR }
+      </h3>
+      <p class="modal-mensaje">{{ mensajeModal() }}</p>
+      @if (tipoModal() === 'error') {
+        <button class="btn-pink btn-full" (click)="cerrarModal()" id="btn-cerrar-modal-registro">CERRAR</button>
+      }
+    </div>
+  </div>
+}

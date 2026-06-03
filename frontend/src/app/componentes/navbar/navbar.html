@@ -1,0 +1,45 @@
+<nav class="navbar" id="navbar-principal">
+  <div class="nav-container">
+    <a routerLink="/" class="nav-logo" id="nav-logo">
+      <span class="logo-icon">🍷</span>
+      <span class="logo-text">DIONISOS -</span>
+      <span class="logo-text-subtitle">"El lugar de los amantes del vino"</span>
+    </a>
+
+    @if (auth.estaLogueado()) {
+      <div class="nav-links" [class.abierto]="menuAbierto">
+        <a routerLink="/publicaciones" routerLinkActive="activo" id="nav-publicaciones" (click)="cerrarMenu()">
+          <span class="material-symbols-outlined">dynamic_feed</span>
+          Publicaciones
+        </a>
+        <a routerLink="/mi-perfil" routerLinkActive="activo" id="nav-perfil" (click)="cerrarMenu()">
+          <span class="material-symbols-outlined">person</span>
+          Mi Perfil
+        </a>
+        <button class="btn-cerrar-sesion" id="btn-cerrar-sesion" (click)="cerrarSesion()">
+          <span class="material-symbols-outlined">logout</span>
+          Salir
+        </button>
+      </div>
+
+      <button class="hamburguesa" id="btn-menu" (click)="toggleMenu()">
+        <span class="material-symbols-outlined">{{ menuAbierto ? 'close' : 'menu' }}</span>
+      </button>
+    } @else {
+      <div class="nav-links" [class.abierto]="menuAbierto">
+        <a routerLink="/login" routerLinkActive="activo" id="nav-login" (click)="cerrarMenu()">
+          <span class="material-symbols-outlined">login</span>
+          Ingresar
+        </a>
+        <a routerLink="/registro" routerLinkActive="activo" id="nav-registro" (click)="cerrarMenu()">
+          <span class="material-symbols-outlined">person_add</span>
+          Registrarse
+        </a>
+      </div>
+
+      <button class="hamburguesa" id="btn-menu-no-auth" (click)="toggleMenu()">
+        <span class="material-symbols-outlined">{{ menuAbierto ? 'close' : 'menu' }}</span>
+      </button>
+    }
+  </div>
+</nav>

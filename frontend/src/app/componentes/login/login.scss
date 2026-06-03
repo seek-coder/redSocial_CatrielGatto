@@ -1,0 +1,144 @@
+.login-container {
+  min-height: calc(100vh - 60px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.login-wrapper {
+  width: 100%;
+  max-width: 440px;
+}
+
+.login-header {
+  text-align: center;
+  margin-bottom: 32px;
+
+  .header-icon {
+    font-size: 3rem;
+    margin-bottom: 12px;
+  }
+
+  .header-subtitle {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: #9ece6a;
+    margin-bottom: 8px;
+  }
+
+  .header-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.8rem;
+    font-weight: 900;
+    letter-spacing: 0.15em;
+    color: #a9b1d6;
+  }
+}
+
+.login-card {
+  padding: 32px;
+  border-color: rgba(158, 206, 106, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(158, 206, 106, 0.05);
+}
+
+.campo {
+  margin-bottom: 20px;
+}
+
+.btn-full {
+  width: 100%;
+  padding: 14px;
+  font-size: 0.85rem;
+}
+
+.separador {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 24px 0;
+
+  .linea {
+    flex: 1;
+    height: 1px;
+    background: rgba(86, 95, 137, 0.3);
+  }
+
+  span {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: #565f89;
+  }
+}
+
+.link-registro {
+  text-align: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+  color: #565f89;
+
+  a {
+    color: #7aa2f7;
+    margin-left: 4px;
+    transition: color 0.3s;
+
+    &:hover {
+      color: #89b4fa;
+    }
+  }
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+}
+
+.modal-contenido {
+  padding: 32px;
+  max-width: 380px;
+  width: 90%;
+  text-align: center;
+  border-color: rgba(247, 118, 142, 0.4);
+  animation: modalEntrada 0.25s ease-out;
+
+  .modal-icono {
+    font-size: 2.5rem;
+    margin-bottom: 12px;
+  }
+
+  .modal-titulo {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    color: #f7768e;
+    margin-bottom: 12px;
+  }
+
+  .modal-mensaje {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    color: #a9b1d6;
+    margin-bottom: 24px;
+    line-height: 1.5;
+  }
+}
+
+@keyframes modalEntrada {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}

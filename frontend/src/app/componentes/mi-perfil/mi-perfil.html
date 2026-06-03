@@ -1,0 +1,66 @@
+<section class="perfil-container">
+  <div class="perfil-wrapper">
+
+    <div class="perfil-header">
+      <div class="header-icon">👤</div>
+      <p class="header-subtitle">// Mi cuenta</p>
+      <h1 class="header-title">MI PERFIL</h1>
+    </div>
+
+    @if (auth.usuario(); as usuario) {
+      <div class="glass-card perfil-card">
+
+        <div class="perfil-top">
+          <div class="avatar-container">
+            @if (usuario.imagenPerfil) {
+              <img [src]="obtenerUrlImagen(usuario)" alt="Foto de perfil" class="avatar-img">
+            } @else {
+              <div class="avatar-placeholder">
+                <span class="material-symbols-outlined">person</span>
+              </div>
+            }
+          </div>
+
+          <div class="perfil-info-principal">
+            <h2 class="perfil-nombre">{{ usuario.nombre }} {{ usuario.apellido }}</h2>
+            <p class="perfil-username">&#64;{{ usuario.nombreUsuario }}</p>
+            <span class="perfil-badge">{{ usuario.perfil }}</span>
+          </div>
+        </div>
+
+        <div class="perfil-detalles">
+          <div class="detalle-item">
+            <span class="material-symbols-outlined">mail</span>
+            <div>
+              <p class="detalle-label">Correo</p>
+              <p class="detalle-valor">{{ usuario.correo }}</p>
+            </div>
+          </div>
+
+          <div class="detalle-item">
+            <span class="material-symbols-outlined">calendar_month</span>
+            <div>
+              <p class="detalle-label">Fecha de nacimiento</p>
+              <p class="detalle-valor">{{ usuario.fechaNacimiento }}</p>
+            </div>
+          </div>
+
+          <div class="detalle-item">
+            <span class="material-symbols-outlined">description</span>
+            <div>
+              <p class="detalle-label">Descripción</p>
+              <p class="detalle-valor">{{ usuario.descripcion }}</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    } @else {
+      <div class="glass-card contenido-vacio">
+        <span class="material-symbols-outlined icono-vacio">person_off</span>
+        <p class="texto-vacio">No hay sesión activa.</p>
+      </div>
+    }
+
+  </div>
+</section>

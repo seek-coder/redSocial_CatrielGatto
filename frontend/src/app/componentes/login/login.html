@@ -1,0 +1,89 @@
+<section class="login-container">
+  <div class="login-wrapper">
+
+    <div class="login-header">
+      <div class="header-icon">🔐</div>
+      <p class="header-subtitle">// Acceso al Sistema</p>
+      <h1 class="header-title">INGRESAR</h1>
+    </div>
+
+    <div class="glass-card login-card">
+
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" id="login-form">
+
+        <div class="campo">
+          <label for="login-identificador" class="label">
+            Correo o nombre de usuario
+          </label>
+          <input id="login-identificador"
+                 type="text"
+                 formControlName="identificador"
+                 placeholder="usuario@ejemplo.com / mi_usuario"
+                 class="input-field"
+                 autocomplete="username">
+          @if (identificador?.invalid && identificador?.touched) {
+            <p class="error-msg">
+              Este campo es obligatorio.
+            </p>
+          }
+        </div>
+
+        <div class="campo">
+          <label for="login-password" class="label">
+            Contraseña
+          </label>
+          <input id="login-password"
+                 type="password"
+                 formControlName="password"
+                 placeholder="••••••••"
+                 class="input-field"
+                 autocomplete="current-password">
+          @if (password?.invalid && password?.touched) {
+            <p class="error-msg">
+              @if (password?.errors?.['required']) {
+                La contraseña es obligatoria.
+              } @else if (password?.errors?.['minlength']) {
+                Debe tener al menos 8 caracteres.
+              } @else if (password?.errors?.['pattern']) {
+                Debe incluir al menos una mayúscula y un número.
+              }
+            </p>
+          }
+        </div>
+
+        <button type="submit"
+                id="login-submit"
+                class="btn-green btn-full"
+                [disabled]="loginForm.invalid || cargando()">
+          @if (cargando()) {
+            INGRESANDO...
+          } @else {
+            ACCEDER
+          }
+        </button>
+      </form>
+
+      <div class="separador">
+        <div class="linea"></div>
+        <span>o</span>
+        <div class="linea"></div>
+      </div>
+
+      <p class="link-registro">
+        ¿No tenés cuenta?
+        <a routerLink="/registro" id="link-a-registro">Registrarse →</a>
+      </p>
+    </div>
+  </div>
+</section>
+
+@if (mostrarModal()) {
+  <div class="modal-overlay" (click)="cerrarModal()" id="modal-error-login">
+    <div class="glass-card modal-contenido" (click)="$event.stopPropagation()">
+      <div class="modal-icono">⚠️</div>
+      <h3 class="modal-titulo">ERROR</h3>
+      <p class="modal-mensaje">{{ mensajeModal() }}</p>
+      <button class="btn-pink btn-full" (click)="cerrarModal()" id="btn-cerrar-modal-login">CERRAR</button>
+    </div>
+  </div>
+}
