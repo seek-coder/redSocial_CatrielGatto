@@ -1,0 +1,16 @@
+# Dependencias
+node_modules/
+
+# Build outputs
+dist/
+.angular/
+
+# Archivos de entorno
+.env
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Uploads locales
+backend/uploads/

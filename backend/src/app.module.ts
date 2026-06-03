@@ -6,7 +6,7 @@ import { PublicacionesModule } from './publicaciones/publicaciones.module';
 
 @Module({
   imports: [
-    MongooseModule.forRoot('mongodb+srv://gatto99:gatto99@prograiv.naiqon7.mongodb.net/red-social?retryWrites=true&w=majority&appName=PrograIV'),
+    MongooseModule.forRoot(process.env['MONGODB_URI'] || 'mongodb+srv://gatto99:gatto99@prograiv.naiqon7.mongodb.net/red-social?retryWrites=true&w=majority&appName=PrograIV'),
     AutenticacionModule,
     UsuariosModule,
     PublicacionesModule,
