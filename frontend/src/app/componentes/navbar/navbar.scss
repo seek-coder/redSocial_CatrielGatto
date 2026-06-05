@@ -5,9 +5,9 @@
   right: 0;
   z-index: 100;
   height: 60px;
-  background: rgba(26, 27, 38, 0.92);
+  background: rgba(26, 15, 20, 0.92);
   backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(122, 162, 247, 0.1);
+  border-bottom: 1px solid rgba(201, 169, 110, 0.08);
 }
 
 .nav-container {
@@ -25,32 +25,32 @@
   align-items: center;
   gap: 10px;
   text-decoration: none;
-  color: #a9b1d6;
+  color: #e8ddd0;
   transition: color 0.3s;
 
   &:hover {
-    color: #7aa2f7;
+    color: #c9a96e;
   }
 
   .logo-icon {
     font-size: 1.4rem;
-    color: #7aa2f7;
-    text-shadow: 0 0 10px rgba(122, 162, 247, 0.5);
   }
 
   .logo-text {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: 'Playfair Display', serif;
     font-weight: 700;
     font-size: 1rem;
-    letter-spacing: 0.2em;
+    letter-spacing: 0.15em;
+    color: #c9a96e;
   }
 
   .logo-text-subtitle {
-    font-family: 'JetBrains Mono', monospace;
-    font-weight: 300;
-    font-size: rem;
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 400;
+    font-size: 0.85rem;
     font-style: italic;
-    letter-spacing: 0.0em;
+    letter-spacing: 0.02em;
+    color: #8a7080;
   }
 }
 
@@ -64,11 +64,11 @@
     align-items: center;
     gap: 6px;
     padding: 8px 16px;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: 'Playfair Display', serif;
     font-size: 0.75rem;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: #565f89;
+    color: #8a7080;
     text-decoration: none;
     border-radius: 6px;
     transition: all 0.3s;
@@ -78,13 +78,13 @@
     }
 
     &:hover {
-      color: #a9b1d6;
-      background: rgba(122, 162, 247, 0.08);
+      color: #e8ddd0;
+      background: rgba(201, 169, 110, 0.06);
     }
 
     &.activo {
-      color: #7aa2f7;
-      background: rgba(122, 162, 247, 0.12);
+      color: #c9a96e;
+      background: rgba(201, 169, 110, 0.1);
     }
   }
 }
@@ -94,13 +94,13 @@
   align-items: center;
   gap: 6px;
   padding: 8px 16px;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'Playfair Display', serif;
   font-size: 0.75rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #f7768e;
+  color: #c45c6a;
   background: transparent;
-  border: 1px solid rgba(247, 118, 142, 0.3);
+  border: 1px solid rgba(196, 92, 106, 0.3);
   border-radius: 6px;
   cursor: pointer;
   transition: all 0.3s;
@@ -110,8 +110,8 @@
   }
 
   &:hover {
-    background: rgba(247, 118, 142, 0.1);
-    border-color: #f7768e;
+    background: rgba(196, 92, 106, 0.08);
+    border-color: #c45c6a;
   }
 }
 
@@ -119,7 +119,7 @@
   display: none;
   background: transparent;
   border: none;
-  color: #a9b1d6;
+  color: #e8ddd0;
   cursor: pointer;
   padding: 4px;
 
@@ -140,9 +140,9 @@
     left: 0;
     right: 0;
     flex-direction: column;
-    background: rgba(26, 27, 38, 0.98);
+    background: rgba(26, 15, 20, 0.98);
     backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(122, 162, 247, 0.1);
+    border-bottom: 1px solid rgba(201, 169, 110, 0.08);
     padding: 16px;
     gap: 4px;
 
