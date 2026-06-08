@@ -8,27 +8,9 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage, memoryStorage } from 'multer';
-import { extname, join } from 'path';
-import { existsSync, mkdirSync, writeFileSync } from 'fs';
+import { memoryStorage } from 'multer';
 import { AutenticacionService } from './autenticacion.service';
 import { RegistroDto, LoginDto } from './dto/autenticacion.dto';
-
-const esVercel = !!process.env['VERCEL'];
-
-const almacenamiento = esVercel
-  ? memoryStorage()
-  : diskStorage({
-      destination: (_req, _file, cb) => {
-        const dir = './uploads/perfiles';
-        if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
-        cb(null, dir);
-      },
-      filename: (_req, file, cb) => {
-        const nombre = Date.now() + '-' + Math.round(Math.random() * 1e6);
-        cb(null, nombre + extname(file.originalname));
-      },
-    });
 
 @Controller('autenticacion')
 export class AutenticacionController {
@@ -38,7 +20,7 @@ export class AutenticacionController {
   @HttpCode(HttpStatus.CREATED)
   @UseInterceptors(
     FileInterceptor('imagenPerfil', {
-      storage: almacenamiento,
+      storage: memoryStorage(),
       fileFilter: (_req, file, cb) => {
         if (!file.mimetype.match(/\/(jpg|jpeg|png|gif|webp)$/)) {
           cb(new Error('Solo se permiten imágenes.'), false);
@@ -46,26 +28,20 @@ export class AutenticacionController {
           cb(null, true);
         }
       },
-      limits: { fileSize: 5 * 1024 * 1024 },
+      limits: { fileSize: 2 * 1024 * 1024 }, // 2MB máximo para base64
     }),
   )
   async registro(
     @Body() registroDto: RegistroDto,
     @UploadedFile() archivo: Express.Multer.File,
   ) {
-    let rutaImagen = '';
+    // Convertir la imagen a base64 data URL para guardar en MongoDB
+    let imagenBase64 = '';
     if (archivo) {
-      if (esVercel) {
-        // En Vercel guardamos en /tmp (efímero)
-        const nombre = Date.now() + '-' + Math.round(Math.random() * 1e6) + extname(archivo.originalname);
-        const tmpPath = join('/tmp', nombre);
-        writeFileSync(tmpPath, archivo.buffer);
-        rutaImagen = `tmp/${nombre}`;
-      } else {
-        rutaImagen = `uploads/perfiles/${archivo.filename}`;
-      }
+      const base64 = archivo.buffer.toString('base64');
+      imagenBase64 = `data:${archivo.mimetype};base64,${base64}`;
     }
-    const usuario = await this.autenticacionService.registrar(registroDto, rutaImagen);
+    const usuario = await this.autenticacionService.registrar(registroDto, imagenBase64);
     return { mensaje: 'Usuario registrado correctamente.', usuario };
   }
 

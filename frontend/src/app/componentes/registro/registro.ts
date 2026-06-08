@@ -12,27 +12,53 @@ import { AuthService } from '../../servicios/auth.service';
 })
 export class RegistroComponent {
 
+  // Solo letras (incluye acentos y ñ)
+  private static readonly PATRON_NOMBRE = /^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]+$/;
+  // Email estricto: algo@algo.algo
+  private static readonly PATRON_EMAIL = /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/;
+
   registroForm = new FormGroup({
-    nombre: new FormControl('', [Validators.required, Validators.minLength(2)]),
-    apellido: new FormControl('', [Validators.required, Validators.minLength(2)]),
-    correo: new FormControl('', [Validators.required, Validators.email]),
+    nombre: new FormControl('', [
+      Validators.required,
+      Validators.minLength(2),
+      Validators.maxLength(30),
+      Validators.pattern(RegistroComponent.PATRON_NOMBRE)
+    ]),
+    apellido: new FormControl('', [
+      Validators.required,
+      Validators.minLength(2),
+      Validators.maxLength(30),
+      Validators.pattern(RegistroComponent.PATRON_NOMBRE)
+    ]),
+    correo: new FormControl('', [
+      Validators.required,
+      Validators.maxLength(100),
+      Validators.pattern(RegistroComponent.PATRON_EMAIL)
+    ]),
     nombreUsuario: new FormControl('', [
       Validators.required,
       Validators.minLength(3),
+      Validators.maxLength(20),
       Validators.pattern(/^[a-zA-Z0-9_]+$/)
     ]),
     password: new FormControl('', [
       Validators.required,
       Validators.minLength(8),
+      Validators.maxLength(50),
       Validators.pattern(/^(?=.*[A-Z])(?=.*\d).+$/)
     ]),
     repetirPassword: new FormControl('', [Validators.required]),
-    fechaNacimiento: new FormControl('', [Validators.required]),
-    descripcion: new FormControl('', [Validators.required, Validators.maxLength(200)]),
+    fechaNacimiento: new FormControl('', [Validators.required, this.validarEdadMinima]),
+    descripcion: new FormControl('', [
+      Validators.required,
+      Validators.minLength(1),
+      Validators.maxLength(200)
+    ]),
   }, { validators: this.validarPasswords });
 
   archivoImagen: File | null = null;
   previewImagen = signal<string | null>(null);
+  errorImagen = signal('');
   mostrarModal = signal(false);
   mensajeModal = signal('');
   tipoModal = signal<'error' | 'exito'>('error');
@@ -58,10 +84,47 @@ export class RegistroComponent {
     return null;
   }
 
+  validarEdadMinima(control: AbstractControl): ValidationErrors | null {
+    if (!control.value) return null;
+    const hoy = new Date();
+    const nacimiento = new Date(control.value);
+    let edad = hoy.getFullYear() - nacimiento.getFullYear();
+    const mesDiff = hoy.getMonth() - nacimiento.getMonth();
+    if (mesDiff < 0 || (mesDiff === 0 && hoy.getDate() < nacimiento.getDate())) {
+      edad--;
+    }
+    if (edad < 13) {
+      return { menorDeEdad: true };
+    }
+    if (nacimiento > hoy) {
+      return { fechaFutura: true };
+    }
+    return null;
+  }
+
   onArchivoSeleccionado(event: Event) {
     const input = event.target as HTMLInputElement;
+    this.errorImagen.set('');
+
     if (input.files && input.files.length > 0) {
-      this.archivoImagen = input.files[0];
+      const archivo = input.files[0];
+
+      // Validar tipo de archivo
+      const tiposPermitidos = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+      if (!tiposPermitidos.includes(archivo.type)) {
+        this.errorImagen.set('Solo se permiten imágenes (JPG, PNG, GIF, WebP).');
+        input.value = '';
+        return;
+      }
+
+      // Validar tamaño (máximo 2MB)
+      if (archivo.size > 2 * 1024 * 1024) {
+        this.errorImagen.set('La imagen no puede superar los 2MB.');
+        input.value = '';
+        return;
+      }
+
+      this.archivoImagen = archivo;
 
       const reader = new FileReader();
       reader.onload = () => {
@@ -77,13 +140,13 @@ export class RegistroComponent {
     this.cargando.set(true);
 
     const formData = new FormData();
-    formData.append('nombre', this.nombre!.value!);
-    formData.append('apellido', this.apellido!.value!);
-    formData.append('correo', this.correo!.value!);
-    formData.append('nombreUsuario', this.nombreUsuario!.value!);
+    formData.append('nombre', this.nombre!.value!.trim());
+    formData.append('apellido', this.apellido!.value!.trim());
+    formData.append('correo', this.correo!.value!.trim().toLowerCase());
+    formData.append('nombreUsuario', this.nombreUsuario!.value!.trim());
     formData.append('password', this.password!.value!);
     formData.append('fechaNacimiento', this.fechaNacimiento!.value!);
-    formData.append('descripcion', this.descripcion!.value!);
+    formData.append('descripcion', this.descripcion!.value!.trim());
 
     if (this.archivoImagen) {
       formData.append('imagenPerfil', this.archivoImagen);
@@ -110,3 +173,4 @@ export class RegistroComponent {
     this.mensajeModal.set('');
   }
 }
+

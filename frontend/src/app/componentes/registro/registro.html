@@ -15,11 +15,14 @@
           <div class="campo">
             <label for="reg-nombre" class="label">Nombre</label>
             <input id="reg-nombre" type="text" formControlName="nombre"
-                   placeholder="Juan" class="input-field" autocomplete="given-name">
+                   placeholder="Juan" class="input-field" autocomplete="given-name"
+                   maxlength="30">
             @if (nombre?.invalid && nombre?.touched) {
               <p class="error-msg">
                 @if (nombre?.errors?.['required']) { El nombre es obligatorio. }
                 @else if (nombre?.errors?.['minlength']) { Mínimo 2 caracteres. }
+                @else if (nombre?.errors?.['maxlength']) { Máximo 30 caracteres. }
+                @else if (nombre?.errors?.['pattern']) { Solo se permiten letras. }
               </p>
             }
           </div>
@@ -27,11 +30,14 @@
           <div class="campo">
             <label for="reg-apellido" class="label">Apellido</label>
             <input id="reg-apellido" type="text" formControlName="apellido"
-                   placeholder="Pérez" class="input-field" autocomplete="family-name">
+                   placeholder="Pérez" class="input-field" autocomplete="family-name"
+                   maxlength="30">
             @if (apellido?.invalid && apellido?.touched) {
               <p class="error-msg">
                 @if (apellido?.errors?.['required']) { El apellido es obligatorio. }
                 @else if (apellido?.errors?.['minlength']) { Mínimo 2 caracteres. }
+                @else if (apellido?.errors?.['maxlength']) { Máximo 30 caracteres. }
+                @else if (apellido?.errors?.['pattern']) { Solo se permiten letras. }
               </p>
             }
           </div>
@@ -40,11 +46,13 @@
         <div class="campo">
           <label for="reg-correo" class="label">Correo electrónico</label>
           <input id="reg-correo" type="email" formControlName="correo"
-                 placeholder="juan@ejemplo.com" class="input-field" autocomplete="email">
+                 placeholder="juan@ejemplo.com" class="input-field" autocomplete="email"
+                 maxlength="100">
           @if (correo?.invalid && correo?.touched) {
             <p class="error-msg">
               @if (correo?.errors?.['required']) { El correo es obligatorio. }
-              @else if (correo?.errors?.['email']) { Formato de correo inválido. }
+              @else if (correo?.errors?.['maxlength']) { Máximo 100 caracteres. }
+              @else if (correo?.errors?.['pattern']) { Ingresá un correo válido (ejemplo: nombre&#64;dominio.com). }
             </p>
           }
         </div>
@@ -52,11 +60,13 @@
         <div class="campo">
           <label for="reg-usuario" class="label">Nombre de usuario</label>
           <input id="reg-usuario" type="text" formControlName="nombreUsuario"
-                 placeholder="juan_perez" class="input-field" autocomplete="username">
+                 placeholder="juan_perez" class="input-field" autocomplete="username"
+                 maxlength="20">
           @if (nombreUsuario?.invalid && nombreUsuario?.touched) {
             <p class="error-msg">
               @if (nombreUsuario?.errors?.['required']) { El nombre de usuario es obligatorio. }
               @else if (nombreUsuario?.errors?.['minlength']) { Mínimo 3 caracteres. }
+              @else if (nombreUsuario?.errors?.['maxlength']) { Máximo 20 caracteres. }
               @else if (nombreUsuario?.errors?.['pattern']) { Solo letras, números y guiones bajos. }
             </p>
           }
@@ -66,11 +76,13 @@
           <div class="campo">
             <label for="reg-password" class="label">Contraseña</label>
             <input id="reg-password" type="password" formControlName="password"
-                   placeholder="••••••••" class="input-field" autocomplete="new-password">
+                   placeholder="••••••••" class="input-field" autocomplete="new-password"
+                   maxlength="50">
             @if (password?.invalid && password?.touched) {
               <p class="error-msg">
                 @if (password?.errors?.['required']) { La contraseña es obligatoria. }
                 @else if (password?.errors?.['minlength']) { Mínimo 8 caracteres. }
+                @else if (password?.errors?.['maxlength']) { Máximo 50 caracteres. }
                 @else if (password?.errors?.['pattern']) { Debe tener al menos una mayúscula y un número. }
               </p>
             }
@@ -79,7 +91,8 @@
           <div class="campo">
             <label for="reg-repetir" class="label">Repetir contraseña</label>
             <input id="reg-repetir" type="password" formControlName="repetirPassword"
-                   placeholder="••••••••" class="input-field" autocomplete="new-password">
+                   placeholder="••••••••" class="input-field" autocomplete="new-password"
+                   maxlength="50">
             @if (repetirPassword?.touched && registroForm.errors?.['passwordsDistintas']) {
               <p class="error-msg">Las contraseñas no coinciden.</p>
             }
@@ -92,7 +105,11 @@
             <input id="reg-fecha" type="date" formControlName="fechaNacimiento"
                    class="input-field">
             @if (fechaNacimiento?.invalid && fechaNacimiento?.touched) {
-              <p class="error-msg">La fecha de nacimiento es obligatoria.</p>
+              <p class="error-msg">
+                @if (fechaNacimiento?.errors?.['required']) { La fecha de nacimiento es obligatoria. }
+                @else if (fechaNacimiento?.errors?.['fechaFutura']) { La fecha no puede ser en el futuro. }
+                @else if (fechaNacimiento?.errors?.['menorDeEdad']) { Debés tener al menos 13 años. }
+              </p>
             }
           </div>
 
@@ -107,9 +124,12 @@
                   <span class="file-text">Elegir imagen</span>
                 }
               </label>
-              <input id="reg-imagen" type="file" accept="image/*"
+              <input id="reg-imagen" type="file" accept="image/jpeg,image/png,image/gif,image/webp"
                      (change)="onArchivoSeleccionado($event)" class="file-input">
             </div>
+            @if (errorImagen()) {
+              <p class="error-msg">{{ errorImagen() }}</p>
+            }
           </div>
         </div>
 
@@ -122,7 +142,7 @@
           </label>
           <textarea id="reg-descripcion" formControlName="descripcion"
                     placeholder="Contanos algo sobre vos..."
-                    class="input-field textarea" rows="3"></textarea>
+                    class="input-field textarea" rows="3" maxlength="200"></textarea>
           @if (descripcion?.invalid && descripcion?.touched) {
             <p class="error-msg">
               @if (descripcion?.errors?.['required']) { La descripción es obligatoria. }
@@ -174,3 +194,4 @@
     </div>
   </div>
 }
+
