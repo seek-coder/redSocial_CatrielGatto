@@ -112,7 +112,6 @@ export class PublicacionesComponent implements OnInit {
         this.paginaActual.set(0);
         this.orden.set('fecha');
         this.cargarPublicaciones();
-        this.mostrarMensaje('Publicación creada.', false);
       },
       error: () => {
         this.enviando.set(false);
@@ -176,7 +175,6 @@ export class PublicacionesComponent implements OnInit {
       next: () => {
         this.idAEliminar.set(null);
         this.cargarPublicaciones();
-        this.mostrarMensaje('Publicación eliminada.', false);
       },
       error: () => {
         this.idAEliminar.set(null);

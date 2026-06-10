@@ -93,7 +93,6 @@ export class MiPerfilComponent implements OnInit {
       next: () => {
         this.idAEliminar.set(null);
         this.cargarMisPublicaciones();
-        this.mostrarMensaje('Publicación eliminada.', false);
       },
       error: () => {
         this.idAEliminar.set(null);
