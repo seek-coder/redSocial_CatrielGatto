@@ -149,7 +149,29 @@
   }
 }
 
-.contenido-vacio {
+.mis-publicaciones-section {
+  margin-top: 32px;
+
+  .seccion-titulo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: #e8ddd0;
+    margin-bottom: 20px;
+
+    .material-symbols-outlined {
+      font-size: 22px;
+      color: #c9a96e;
+    }
+  }
+}
+
+.contenido-vacio,
+.contenido-vacio-pub {
   padding: 64px 32px;
   text-align: center;
 
@@ -163,5 +185,63 @@
     font-family: 'Playfair Display', serif;
     font-size: 1rem;
     color: #e8ddd0;
+  }
+}
+
+.contenido-vacio-pub {
+  padding: 40px 24px;
+
+  .icono-vacio {
+    font-size: 48px;
+  }
+
+  .texto-vacio {
+    font-size: 0.9rem;
+  }
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+}
+
+.modal-content {
+  padding: 32px;
+  text-align: center;
+  max-width: 400px;
+  width: 90%;
+
+  .modal-icon {
+    font-size: 48px;
+    color: #8a9a5b;
+    margin-bottom: 16px;
+
+    &.error {
+      color: #c45c6a;
+    }
+
+    &.warn {
+      color: #c9a96e;
+    }
+  }
+
+  .modal-texto {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.95rem;
+    color: #e8ddd0;
+    margin-bottom: 24px;
+    line-height: 1.5;
+  }
+
+  .modal-botones {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
   }
 }

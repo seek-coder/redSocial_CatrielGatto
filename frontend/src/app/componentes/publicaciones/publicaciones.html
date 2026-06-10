@@ -2,16 +2,145 @@
   <div class="publicaciones-wrapper">
 
     <div class="publicaciones-header">
-      <div class="header-icon">📰</div>
-      <p class="header-subtitle">// Feed</p>
+      <div class="header-icon">🍷</div>
+      <p class="header-subtitle">// La Bodega</p>
       <h1 class="header-title">PUBLICACIONES</h1>
     </div>
 
-    <div class="glass-card contenido-vacio">
-      <span class="material-symbols-outlined icono-vacio">article</span>
-      <p class="texto-vacio">Todavía no hay publicaciones.</p>
-      <p class="subtexto-vacio">Esta sección estará disponible próximamente.</p>
+    <div class="controles-top">
+      <div class="orden-controles">
+        <button
+          class="btn-orden"
+          [class.activo]="orden() === 'fecha'"
+          (click)="cambiarOrden('fecha')">
+          <span class="material-symbols-outlined">schedule</span>
+          Recientes
+        </button>
+        <button
+          class="btn-orden"
+          [class.activo]="orden() === 'likes'"
+          (click)="cambiarOrden('likes')">
+          <span class="material-symbols-outlined">favorite</span>
+          Populares
+        </button>
+      </div>
+
+      <button class="btn-primary btn-nueva" (click)="toggleFormulario()">
+        <span class="material-symbols-outlined">{{ mostrarFormulario() ? 'close' : 'add' }}</span>
+        {{ mostrarFormulario() ? 'Cancelar' : 'Nueva' }}
+      </button>
     </div>
+
+    @if (mostrarFormulario()) {
+      <div class="glass-card formulario-nueva">
+        <h3 class="form-titulo">Nueva publicación</h3>
+
+        <div class="campo">
+          <label class="label" for="titulo">Título</label>
+          <input
+            type="text"
+            id="titulo"
+            class="input-field"
+            placeholder="Título de tu publicación..."
+            [(ngModel)]="nuevoTitulo"
+            maxlength="100">
+        </div>
+
+        <div class="campo">
+          <label class="label" for="mensaje">Mensaje</label>
+          <textarea
+            id="mensaje"
+            class="input-field textarea-field"
+            placeholder="¿Qué querés compartir con la comunidad?"
+            [(ngModel)]="nuevoMensaje"
+            maxlength="500"
+            rows="4"></textarea>
+        </div>
+
+        <div class="campo">
+          <label class="label">Imagen (opcional)</label>
+          <input
+            type="file"
+            accept="image/*"
+            class="input-file"
+            (change)="onArchivoSeleccionado($event)">
+        </div>
+
+        <button
+          class="btn-green btn-publicar"
+          [disabled]="!nuevoTitulo.trim() || !nuevoMensaje.trim() || enviando()"
+          (click)="crearPublicacion()">
+          <span class="material-symbols-outlined">send</span>
+          {{ enviando() ? 'Publicando...' : 'Publicar' }}
+        </button>
+      </div>
+    }
+
+    @if (publicaciones().length > 0) {
+      <div class="listado-publicaciones">
+        @for (pub of publicaciones(); track pub._id) {
+          <app-publicacion
+            [publicacion]="pub"
+            [usuarioActualId]="auth.usuario()?._id || ''"
+            [esAdmin]="auth.usuario()?.perfil === 'administrador'"
+            (like)="onLike($event)"
+            (unlike)="onUnlike($event)"
+            (eliminar)="pedirConfirmacion($event)">
+          </app-publicacion>
+        }
+      </div>
+
+      @if (totalPaginas() > 1) {
+        <div class="paginacion">
+          <button
+            class="btn-pagina"
+            [disabled]="!hayAnterior()"
+            (click)="paginaAnterior()">
+            <span class="material-symbols-outlined">chevron_left</span>
+            Anterior
+          </button>
+          <span class="pagina-info">{{ paginaActual() + 1 }} / {{ totalPaginas() }}</span>
+          <button
+            class="btn-pagina"
+            [disabled]="!haySiguiente()"
+            (click)="paginaSiguiente()">
+            Siguiente
+            <span class="material-symbols-outlined">chevron_right</span>
+          </button>
+        </div>
+      }
+    } @else {
+      <div class="glass-card contenido-vacio">
+        <span class="material-symbols-outlined icono-vacio">wine_bar</span>
+        <p class="texto-vacio">Todavía no hay publicaciones.</p>
+        <p class="subtexto-vacio">Sé el primero en compartir con la comunidad.</p>
+      </div>
+    }
 
   </div>
 </section>
+
+@if (idAEliminar()) {
+  <div class="modal-overlay" (click)="cancelarEliminar()">
+    <div class="modal-content glass-card" (click)="$event.stopPropagation()">
+      <span class="material-symbols-outlined modal-icon warn">warning</span>
+      <p class="modal-texto">¿Estás seguro de que querés eliminar esta publicación?</p>
+      <div class="modal-botones">
+        <button class="btn-primary" (click)="cancelarEliminar()">Cancelar</button>
+        <button class="btn-pink" (click)="confirmarEliminar()">Eliminar</button>
+      </div>
+    </div>
+  </div>
+}
+
+@if (mostrarModal()) {
+  <div class="modal-overlay" (click)="cerrarModal()">
+    <div class="modal-content glass-card" (click)="$event.stopPropagation()">
+      <span class="material-symbols-outlined modal-icon" [class.error]="esError()">
+        {{ esError() ? 'error' : 'check_circle' }}
+      </span>
+      <p class="modal-texto">{{ mensajeModal() }}</p>
+      <button class="btn-primary" (click)="cerrarModal()">Aceptar</button>
+    </div>
+  </div>
+}

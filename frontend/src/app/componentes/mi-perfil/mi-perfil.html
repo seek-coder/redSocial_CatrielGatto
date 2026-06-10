@@ -55,6 +55,32 @@
         </div>
 
       </div>
+
+      <div class="mis-publicaciones-section">
+        <h3 class="seccion-titulo">
+          <span class="material-symbols-outlined">article</span>
+          Mis últimas publicaciones
+        </h3>
+
+        @if (misPublicaciones().length > 0) {
+          @for (pub of misPublicaciones(); track pub._id) {
+            <app-publicacion
+              [publicacion]="pub"
+              [usuarioActualId]="usuario._id || ''"
+              [esAdmin]="usuario.perfil === 'administrador'"
+              (like)="onLike($event)"
+              (unlike)="onUnlike($event)"
+              (eliminar)="pedirConfirmacion($event)">
+            </app-publicacion>
+          }
+        } @else {
+          <div class="glass-card contenido-vacio-pub">
+            <span class="material-symbols-outlined icono-vacio">edit_note</span>
+            <p class="texto-vacio">Todavía no publicaste nada.</p>
+          </div>
+        }
+      </div>
+
     } @else {
       <div class="glass-card contenido-vacio">
         <span class="material-symbols-outlined icono-vacio">person_off</span>
@@ -64,3 +90,28 @@
 
   </div>
 </section>
+
+@if (idAEliminar()) {
+  <div class="modal-overlay" (click)="cancelarEliminar()">
+    <div class="modal-content glass-card" (click)="$event.stopPropagation()">
+      <span class="material-symbols-outlined modal-icon warn">warning</span>
+      <p class="modal-texto">¿Estás seguro de que querés eliminar esta publicación?</p>
+      <div class="modal-botones">
+        <button class="btn-primary" (click)="cancelarEliminar()">Cancelar</button>
+        <button class="btn-pink" (click)="confirmarEliminar()">Eliminar</button>
+      </div>
+    </div>
+  </div>
+}
+
+@if (mostrarModal()) {
+  <div class="modal-overlay" (click)="cerrarModal()">
+    <div class="modal-content glass-card" (click)="$event.stopPropagation()">
+      <span class="material-symbols-outlined modal-icon" [class.error]="esError()">
+        {{ esError() ? 'error' : 'check_circle' }}
+      </span>
+      <p class="modal-texto">{{ mensajeModal() }}</p>
+      <button class="btn-primary" (click)="cerrarModal()">Aceptar</button>
+    </div>
+  </div>
+}

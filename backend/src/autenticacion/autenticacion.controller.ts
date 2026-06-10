@@ -28,14 +28,14 @@ export class AutenticacionController {
           cb(null, true);
         }
       },
-      limits: { fileSize: 2 * 1024 * 1024 }, // 2MB máximo para base64
+      limits: { fileSize: 2 * 1024 * 1024 }, // 2MB máximo para base64, sino rompe todo xd
     }),
   )
   async registro(
     @Body() registroDto: RegistroDto,
     @UploadedFile() archivo: Express.Multer.File,
   ) {
-    // Convertir la imagen a base64 data URL para guardar en MongoDB
+    // Concvierto la imagen a base64 data URL para guardar en MongoDB, más fácil
     let imagenBase64 = '';
     if (archivo) {
       const base64 = archivo.buffer.toString('base64');

@@ -38,6 +38,168 @@
   }
 }
 
+.controles-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.orden-controles {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-orden {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  font-family: 'Playfair Display', serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #8a7080;
+  background: rgba(45, 20, 30, 0.5);
+  border: 1px solid rgba(138, 112, 128, 0.2);
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s;
+
+  .material-symbols-outlined {
+    font-size: 16px;
+  }
+
+  &:hover {
+    border-color: #c9a96e;
+    color: #c9a96e;
+  }
+
+  &.activo {
+    border-color: #c9a96e;
+    color: #c9a96e;
+    background: rgba(201, 169, 110, 0.08);
+  }
+}
+
+.btn-nueva {
+  padding: 8px 18px;
+  font-size: 0.7rem;
+
+  .material-symbols-outlined {
+    font-size: 16px;
+  }
+}
+
+.formulario-nueva {
+  padding: 24px;
+  margin-bottom: 24px;
+
+  .form-titulo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #e8ddd0;
+    margin-bottom: 20px;
+  }
+
+  .campo {
+    margin-bottom: 16px;
+  }
+
+  .textarea-field {
+    resize: vertical;
+    min-height: 80px;
+    font-family: 'Cormorant Garamond', serif;
+  }
+
+  .input-file {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.8rem;
+    color: #8a7080;
+
+    &::file-selector-button {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 8px 16px;
+      color: #c9a96e;
+      background: transparent;
+      border: 1px solid rgba(201, 169, 110, 0.3);
+      border-radius: 6px;
+      cursor: pointer;
+      margin-right: 12px;
+      transition: all 0.3s;
+
+      &:hover {
+        background: rgba(201, 169, 110, 0.1);
+      }
+    }
+  }
+
+  .btn-publicar {
+    width: 100%;
+    margin-top: 8px;
+  }
+}
+
+.listado-publicaciones {
+  display: flex;
+  flex-direction: column;
+}
+
+.paginacion {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 24px;
+  padding: 16px;
+
+  .btn-pagina {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 16px;
+    font-family: 'Playfair Display', serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #c9a96e;
+    background: transparent;
+    border: 1px solid rgba(201, 169, 110, 0.3);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+
+    .material-symbols-outlined {
+      font-size: 18px;
+    }
+
+    &:hover:not(:disabled) {
+      background: rgba(201, 169, 110, 0.1);
+      border-color: #c9a96e;
+    }
+
+    &:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+  }
+
+  .pagina-info {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.9rem;
+    font-style: italic;
+    color: #8a7080;
+  }
+}
+
 .contenido-vacio {
   padding: 64px 32px;
   text-align: center;
@@ -60,5 +222,66 @@
     font-size: 0.85rem;
     font-style: italic;
     color: #8a7080;
+  }
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+}
+
+.modal-content {
+  padding: 32px;
+  text-align: center;
+  max-width: 400px;
+  width: 90%;
+
+  .modal-icon {
+    font-size: 48px;
+    color: #8a9a5b;
+    margin-bottom: 16px;
+
+    &.error {
+      color: #c45c6a;
+    }
+
+    &.warn {
+      color: #c9a96e;
+    }
+  }
+
+  .modal-texto {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.95rem;
+    color: #e8ddd0;
+    margin-bottom: 24px;
+    line-height: 1.5;
+  }
+
+  .modal-botones {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .controles-top {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .orden-controles {
+    justify-content: center;
+  }
+
+  .btn-nueva {
+    justify-content: center;
   }
 }

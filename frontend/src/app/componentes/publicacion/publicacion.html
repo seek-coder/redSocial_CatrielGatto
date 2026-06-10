@@ -1,0 +1,44 @@
+<article class="publicacion-card glass-card">
+  <div class="publicacion-header">
+    <div class="autor-info">
+      @if (publicacion.autor.imagenPerfil) {
+        <img [src]="publicacion.autor.imagenPerfil" alt="Avatar" class="autor-avatar">
+      } @else {
+        <div class="autor-avatar-placeholder">
+          <span class="material-symbols-outlined">person</span>
+        </div>
+      }
+      <div>
+        <p class="autor-nombre">{{ publicacion.autor.nombre }} {{ publicacion.autor.apellido }}</p>
+        <p class="publicacion-fecha">{{ formatearFecha(publicacion.createdAt) }}</p>
+      </div>
+    </div>
+
+    @if (puedeEliminar) {
+      <button class="btn-eliminar" (click)="onEliminar()" title="Eliminar publicación">
+        <span class="material-symbols-outlined">delete</span>
+      </button>
+    }
+  </div>
+
+  <div class="publicacion-body">
+    <h3 class="publicacion-titulo">{{ publicacion.titulo }}</h3>
+    <p class="publicacion-mensaje">{{ publicacion.mensaje }}</p>
+
+    @if (publicacion.imagen) {
+      <div class="publicacion-imagen-container">
+        <img [src]="publicacion.imagen" alt="Imagen de publicación" class="publicacion-imagen">
+      </div>
+    }
+  </div>
+
+  <div class="publicacion-footer">
+    <button
+      class="btn-like"
+      [class.liked]="yaDioLike"
+      (click)="toggleLike()">
+      <span class="material-symbols-outlined">{{ yaDioLike ? 'favorite' : 'favorite_border' }}</span>
+      <span class="like-count">{{ publicacion.cantidadLikes }}</span>
+    </button>
+  </div>
+</article>
