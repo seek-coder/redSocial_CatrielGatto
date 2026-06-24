@@ -5,10 +5,10 @@ export type PublicacionDocument = Publicacion & Document;
 
 @Schema({ timestamps: true })
 export class Publicacion {
-  @Prop({ required: true })
+  @Prop({ required: true, maxlength: 100 })
   titulo: string;
 
-  @Prop({ required: true })
+  @Prop({ required: true, maxlength: 500 })
   mensaje: string;
 
   @Prop({ default: '' })
