@@ -1,0 +1,154 @@
+<section class="detalle-container">
+  <div class="detalle-wrapper">
+
+    <a routerLink="/publicaciones" class="btn-volver">
+      <span class="material-symbols-outlined">arrow_back</span>
+      Volver a publicaciones
+    </a>
+
+    @if (publicacion(); as pub) {
+      <article class="glass-card publicacion-detalle">
+        <div class="publicacion-header">
+          <div class="autor-info">
+            @if (pub.autor.imagenPerfil) {
+              <img [src]="pub.autor.imagenPerfil" alt="Avatar" class="autor-avatar">
+            } @else {
+              <div class="autor-avatar-placeholder">
+                <span class="material-symbols-outlined">person</span>
+              </div>
+            }
+            <div>
+              <p class="autor-nombre">{{ pub.autor.nombre }} {{ pub.autor.apellido }}</p>
+              <p class="publicacion-fecha">{{ formatearFecha(pub.createdAt) }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="publicacion-body-detalle">
+          <h2 class="publicacion-titulo-detalle">{{ pub.titulo }}</h2>
+          <p class="publicacion-mensaje-detalle">{{ pub.mensaje }}</p>
+
+          @if (pub.imagen) {
+            <div class="publicacion-imagen-grande">
+              <img [src]="pub.imagen" alt="Imagen de publicación">
+            </div>
+          }
+        </div>
+
+        <div class="publicacion-footer-detalle">
+          <button
+            class="btn-like-detalle"
+            [class.liked]="yaDioLike"
+            (click)="yaDioLike ? onUnlike() : onLike()">
+            <span class="material-symbols-outlined">{{ yaDioLike ? 'favorite' : 'favorite_border' }}</span>
+            <span>{{ pub.cantidadLikes }}</span>
+          </button>
+        </div>
+      </article>
+
+      <div class="comentarios-section">
+        <h3 class="comentarios-titulo">
+          <span class="material-symbols-outlined">forum</span>
+          Comentarios ({{ totalComentarios() }})
+        </h3>
+
+        <div class="glass-card formulario-comentario">
+          <textarea
+            class="input-field textarea-comentario"
+            placeholder="Escribí tu comentario..."
+            [(ngModel)]="nuevoComentario"
+            maxlength="500"
+            rows="3"></textarea>
+          <button
+            class="btn-green btn-enviar-comentario"
+            [disabled]="!nuevoComentario.trim() || enviando()"
+            (click)="enviarComentario()">
+            <span class="material-symbols-outlined">send</span>
+            {{ enviando() ? 'Enviando...' : 'Comentar' }}
+          </button>
+        </div>
+
+        @if (comentarios().length > 0) {
+          <div class="listado-comentarios">
+            @for (comentario of comentarios(); track comentario._id) {
+              <div class="glass-card comentario-card">
+                <div class="comentario-header">
+                  <div class="comentario-autor-info">
+                    @if (comentario.autor.imagenPerfil) {
+                      <img [src]="comentario.autor.imagenPerfil" alt="Avatar" class="comentario-avatar">
+                    } @else {
+                      <div class="comentario-avatar-placeholder">
+                        <span class="material-symbols-outlined">person</span>
+                      </div>
+                    }
+                    <div>
+                      <p class="comentario-autor-nombre">
+                        {{ comentario.autor.nombre }} {{ comentario.autor.apellido }}
+                        @if (comentario.modificado) {
+                          <span class="tag-editado">(editado)</span>
+                        }
+                      </p>
+                      <p class="comentario-fecha">{{ formatearFecha(comentario.createdAt) }}</p>
+                    </div>
+                  </div>
+
+                  @if (comentario.autor._id === auth.usuario()?._id && editandoId() !== comentario._id) {
+                    <button class="btn-editar-comentario" (click)="iniciarEdicion(comentario)">
+                      <span class="material-symbols-outlined">edit</span>
+                    </button>
+                  }
+                </div>
+
+                @if (editandoId() === comentario._id) {
+                  <div class="edicion-comentario">
+                    <textarea
+                      class="input-field textarea-edicion"
+                      [(ngModel)]="textoEdicion"
+                      maxlength="500"
+                      rows="2"></textarea>
+                    <div class="edicion-botones">
+                      <button class="btn-primary btn-sm" (click)="cancelarEdicion()">Cancelar</button>
+                      <button class="btn-green btn-sm" (click)="guardarEdicion(comentario._id)" [disabled]="!textoEdicion.trim()">Guardar</button>
+                    </div>
+                  </div>
+                } @else {
+                  <p class="comentario-texto">{{ comentario.mensaje }}</p>
+                }
+              </div>
+            }
+          </div>
+
+          @if (hayMasComentarios) {
+            <button class="btn-primary btn-cargar-mas" (click)="cargarMas()">
+              <span class="material-symbols-outlined">expand_more</span>
+              Cargar más comentarios
+            </button>
+          }
+        } @else {
+          <div class="glass-card sin-comentarios">
+            <span class="material-symbols-outlined icono-sin-comentarios">chat_bubble_outline</span>
+            <p>Todavía no hay comentarios. Sé el primero en comentar.</p>
+          </div>
+        }
+      </div>
+    } @else {
+      <div class="glass-card cargando-pub">
+        <span class="material-symbols-outlined">hourglass_top</span>
+        <p>Cargando publicación...</p>
+      </div>
+    }
+
+  </div>
+</section>
+
+@if (mostrarModal()) {
+  <div class="modal-overlay" (click)="cerrarModal()">
+    <div class="modal-content glass-card" (click)="$event.stopPropagation()">
+      <span class="material-symbols-outlined modal-icon" [class.error]="esError()">
+        {{ esError() ? 'error' : 'check_circle' }}
+      </span>
+      <p class="modal-texto">{{ mensajeModal() }}</p>
+      <button class="btn-primary" (click)="cerrarModal()">Aceptar</button>
+    </div>
+  </div>
+}

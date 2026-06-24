@@ -12,9 +12,7 @@ import { AuthService } from '../../servicios/auth.service';
 })
 export class RegistroComponent {
 
-  // Solo letras (incluye acentos y ñ)
   private static readonly PATRON_NOMBRE = /^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]+$/;
-  // Email estricto: algo@algo.algo
   private static readonly PATRON_EMAIL = /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/;
 
   registroForm = new FormGroup({
@@ -109,7 +107,6 @@ export class RegistroComponent {
     if (input.files && input.files.length > 0) {
       const archivo = input.files[0];
 
-      // Validar tipo de archivo
       const tiposPermitidos = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
       if (!tiposPermitidos.includes(archivo.type)) {
         this.errorImagen.set('Solo se permiten imágenes (JPG, PNG, GIF, WebP).');
@@ -117,7 +114,6 @@ export class RegistroComponent {
         return;
       }
 
-      // Validar tamaño (máximo 2MB)
       if (archivo.size > 2 * 1024 * 1024) {
         this.errorImagen.set('La imagen no puede superar los 2MB.');
         input.value = '';
@@ -173,4 +169,3 @@ export class RegistroComponent {
     this.mensajeModal.set('');
   }
 }
-

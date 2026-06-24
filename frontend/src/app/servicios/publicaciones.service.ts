@@ -45,6 +45,10 @@ export class PublicacionesService {
     return this.http.get<RespuestaPublicaciones>(this.apiUrl, { params });
   }
 
+  obtenerPorId(id: string) {
+    return this.http.get<Publicacion>(`${this.apiUrl}/${id}`);
+  }
+
   crear(formData: FormData) {
     return this.http.post<Publicacion>(this.apiUrl, formData);
   }

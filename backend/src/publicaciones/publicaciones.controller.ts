@@ -66,6 +66,11 @@ export class PublicacionesController {
     });
   }
 
+  @Get(':id')
+  async obtenerPorId(@Param('id') id: string) {
+    return this.publicacionesService.obtenerPorId(id);
+  }
+
   @Delete(':id')
   @HttpCode(HttpStatus.OK)
   async eliminar(

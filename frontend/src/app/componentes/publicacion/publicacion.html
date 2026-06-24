@@ -40,5 +40,10 @@
       <span class="material-symbols-outlined">{{ yaDioLike ? 'favorite' : 'favorite_border' }}</span>
       <span class="like-count">{{ publicacion.cantidadLikes }}</span>
     </button>
+
+    <a class="btn-comentarios" [routerLink]="['/publicacion', publicacion._id]">
+      <span class="material-symbols-outlined">chat_bubble_outline</span>
+      Comentarios
+    </a>
   </div>
 </article>

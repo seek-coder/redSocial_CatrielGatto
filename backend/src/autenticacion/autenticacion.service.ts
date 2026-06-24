@@ -1,11 +1,15 @@
 import { Injectable, BadRequestException, UnauthorizedException } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
 import { UsuariosService } from '../usuarios/usuarios.service';
 import { RegistroDto, LoginDto } from './dto/autenticacion.dto';
 
 @Injectable()
 export class AutenticacionService {
-  constructor(private usuariosService: UsuariosService) {}
+  constructor(
+    private usuariosService: UsuariosService,
+    private jwtService: JwtService,
+  ) {}
 
   async registrar(datos: RegistroDto, rutaImagen: string) {
     const existeCorreo = await this.usuariosService.existeCorreo(datos.correo);
@@ -35,7 +39,9 @@ export class AutenticacionService {
 
     const usuarioObj = usuario.toObject();
     delete usuarioObj.password;
-    return usuarioObj;
+
+    const token = this.generarToken(usuarioObj);
+    return { usuario: usuarioObj, token };
   }
 
   async login(datos: LoginDto) {
@@ -56,6 +62,36 @@ export class AutenticacionService {
 
     const usuarioObj = usuario.toObject();
     delete usuarioObj.password;
-    return usuarioObj;
+
+    const token = this.generarToken(usuarioObj);
+    return { usuario: usuarioObj, token };
+  }
+
+  validarToken(token: string) {
+    try {
+      return this.jwtService.verify(token);
+    } catch {
+      throw new UnauthorizedException('Token inválido o expirado.');
+    }
+  }
+
+  refrescarToken(payload: any) {
+    const nuevoPayload = {
+      sub: payload.sub,
+      correo: payload.correo,
+      nombreUsuario: payload.nombreUsuario,
+      perfil: payload.perfil,
+    };
+    return this.jwtService.sign(nuevoPayload);
+  }
+
+  private generarToken(usuario: any): string {
+    const payload = {
+      sub: usuario._id.toString(),
+      correo: usuario.correo,
+      nombreUsuario: usuario.nombreUsuario,
+      perfil: usuario.perfil,
+    };
+    return this.jwtService.sign(payload);
   }
 }

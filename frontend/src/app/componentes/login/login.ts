@@ -1,4 +1,4 @@
-import { Component, signal, OnInit } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { RouterLink, Router } from '@angular/router';
 import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
 import { AuthService } from '../../servicios/auth.service';
@@ -10,7 +10,7 @@ import { AuthService } from '../../servicios/auth.service';
   templateUrl: './login.html',
   styleUrl: './login.scss'
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent {
 
   loginForm = new FormGroup({
     identificador: new FormControl('', [Validators.required]),
@@ -26,12 +26,6 @@ export class LoginComponent implements OnInit {
   cargando = signal(false);
 
   constructor(private auth: AuthService, private router: Router) {}
-
-  ngOnInit() {
-    if (this.auth.estaLogueado()) {
-      this.router.navigate(['/publicaciones']);
-    }
-  }
 
   get identificador() { return this.loginForm.get('identificador'); }
   get password() { return this.loginForm.get('password'); }

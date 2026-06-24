@@ -50,9 +50,11 @@ export class PublicacionesService {
 
     const resultado = publicaciones.map((pub) => {
       const obj = pub.toObject();
+      const likesComoStrings = obj.likes ? obj.likes.map((id: any) => id.toString()) : [];
       return {
         ...obj,
-        cantidadLikes: obj.likes ? obj.likes.length : 0,
+        likes: likesComoStrings,
+        cantidadLikes: likesComoStrings.length,
       };
     });
 
@@ -61,6 +63,25 @@ export class PublicacionesService {
     }
 
     return { publicaciones: resultado, total };
+  }
+
+  async obtenerPorId(publicacionId: string) {
+    const publicacion = await this.publicacionModel
+      .findById(publicacionId)
+      .populate('autor', '-password')
+      .exec();
+
+    if (!publicacion || !publicacion.activa) {
+      throw new NotFoundException('Publicación no encontrada.');
+    }
+
+    const obj = publicacion.toObject();
+    const likesComoStrings = obj.likes ? obj.likes.map((id: any) => id.toString()) : [];
+    return {
+      ...obj,
+      likes: likesComoStrings,
+      cantidadLikes: likesComoStrings.length,
+    };
   }
 
   async eliminar(publicacionId: string, usuarioId: string, perfilUsuario: string) {

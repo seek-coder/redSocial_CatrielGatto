@@ -1,10 +1,11 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { Publicacion } from '../../servicios/publicaciones.service';
 
 @Component({
   selector: 'app-publicacion',
   standalone: true,
-  imports: [],
+  imports: [RouterLink],
   templateUrl: './publicacion.html',
   styleUrl: './publicacion.scss'
 })

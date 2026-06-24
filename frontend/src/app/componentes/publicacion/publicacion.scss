@@ -113,6 +113,7 @@
 .publicacion-footer {
   display: flex;
   align-items: center;
+  gap: 12px;
   padding-top: 12px;
   border-top: 1px solid rgba(138, 112, 128, 0.1);
 }
@@ -153,5 +154,32 @@
     .material-symbols-outlined {
       transform: scale(1.1);
     }
+  }
+}
+
+.btn-comentarios {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  font-family: 'Playfair Display', serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #8a7080;
+  border: 1px solid rgba(138, 112, 128, 0.2);
+  border-radius: 20px;
+  text-decoration: none;
+  transition: all 0.3s;
+
+  .material-symbols-outlined {
+    font-size: 18px;
+  }
+
+  &:hover {
+    border-color: #c9a96e;
+    color: #c9a96e;
+    background: rgba(201, 169, 110, 0.06);
   }
 }
