@@ -14,10 +14,14 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
 import { PublicacionesService } from './publicaciones.service';
+import { CloudinaryService } from '../cloudinary/cloudinary.service';
 
 @Controller('publicaciones')
 export class PublicacionesController {
-  constructor(private readonly publicacionesService: PublicacionesService) {}
+  constructor(
+    private readonly publicacionesService: PublicacionesService,
+    private readonly cloudinaryService: CloudinaryService,
+  ) {}
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
@@ -38,15 +42,14 @@ export class PublicacionesController {
     @Body() body: { titulo: string; mensaje: string; autorId: string },
     @UploadedFile() archivo: Express.Multer.File,
   ) {
-    let imagenBase64 = '';
+    let imagenUrl = '';
     if (archivo) {
-      const base64 = archivo.buffer.toString('base64');
-      imagenBase64 = `data:${archivo.mimetype};base64,${base64}`;
+      imagenUrl = await this.cloudinaryService.subirImagen(archivo);
     }
     return this.publicacionesService.crear({
       titulo: body.titulo,
       mensaje: body.mensaje,
-      imagen: imagenBase64,
+      imagen: imagenUrl,
       autorId: body.autorId,
     });
   }

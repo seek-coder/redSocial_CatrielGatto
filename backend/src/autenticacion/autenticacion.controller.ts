@@ -15,6 +15,7 @@ import { memoryStorage } from 'multer';
 import * as express from 'express';
 import { AutenticacionService } from './autenticacion.service';
 import { RegistroDto, LoginDto } from './dto/autenticacion.dto';
+import { CloudinaryService } from '../cloudinary/cloudinary.service';
 
 const COOKIE_OPTIONS = {
   httpOnly: true,
@@ -26,7 +27,10 @@ const COOKIE_OPTIONS = {
 
 @Controller('autenticacion')
 export class AutenticacionController {
-  constructor(private readonly autenticacionService: AutenticacionService) {}
+  constructor(
+    private readonly autenticacionService: AutenticacionService,
+    private readonly cloudinaryService: CloudinaryService,
+  ) {}
 
   @Post('registro')
   @HttpCode(HttpStatus.CREATED)
@@ -48,12 +52,11 @@ export class AutenticacionController {
     @UploadedFile() archivo: Express.Multer.File,
     @Res({ passthrough: true }) res: express.Response,
   ) {
-    let imagenBase64 = '';
+    let imagenUrl = '';
     if (archivo) {
-      const base64 = archivo.buffer.toString('base64');
-      imagenBase64 = `data:${archivo.mimetype};base64,${base64}`;
+      imagenUrl = await this.cloudinaryService.subirImagen(archivo);
     }
-    const resultado = await this.autenticacionService.registrar(registroDto, imagenBase64);
+    const resultado = await this.autenticacionService.registrar(registroDto, imagenUrl);
     res.cookie('token', resultado.token, COOKIE_OPTIONS);
     return { mensaje: 'Usuario registrado correctamente.', usuario: resultado.usuario };
   }
