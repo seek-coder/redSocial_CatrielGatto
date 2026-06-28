@@ -1,11 +1,14 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Publicacion } from '../../servicios/publicaciones.service';
+import { TruncarPipe } from '../../pipes/truncar.pipe';
+import { FechaRelativaPipe } from '../../pipes/fecha-relativa.pipe';
+import { ImagenFallbackDirective } from '../../directivas/imagen-fallback.directive';
 
 @Component({
   selector: 'app-publicacion',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, TruncarPipe, FechaRelativaPipe, ImagenFallbackDirective],
   templateUrl: './publicacion.html',
   styleUrl: './publicacion.scss'
 })
@@ -40,16 +43,5 @@ export class PublicacionComponent {
 
   onEliminar() {
     this.eliminar.emit(this.publicacion._id);
-  }
-
-  formatearFecha(fecha: string): string {
-    const d = new Date(fecha);
-    return d.toLocaleDateString('es-AR', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
   }
 }

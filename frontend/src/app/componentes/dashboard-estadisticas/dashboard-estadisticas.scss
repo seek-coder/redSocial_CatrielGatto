@@ -1,0 +1,90 @@
+.dashboard-container {
+  position: relative;
+  z-index: 2;
+  min-height: 100vh;
+  padding: 80px 20px 40px;
+}
+
+.dashboard-wrapper {
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.dashboard-header {
+  text-align: center;
+  margin-bottom: 32px;
+
+  .header-icon {
+    font-size: 2.5rem;
+    margin-bottom: 8px;
+  }
+
+  .header-subtitle {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.85rem;
+    color: #8a7080;
+    letter-spacing: 0.1em;
+    margin-bottom: 6px;
+  }
+
+  .header-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    letter-spacing: 0.2em;
+    color: #c9a96e;
+    font-weight: 700;
+  }
+}
+
+.filtro-fechas {
+  display: flex;
+  gap: 20px;
+  padding: 20px 24px;
+  margin-bottom: 28px;
+  align-items: flex-end;
+
+  .filtro-grupo {
+    flex: 1;
+  }
+}
+
+.graficos-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.grafico-card {
+  padding: 20px;
+
+  &.grafico-ancho {
+    grid-column: 1 / -1;
+  }
+}
+
+.chart-container {
+  position: relative;
+}
+
+.chart-pie {
+  height: 300px;
+}
+
+.chart-line {
+  height: 300px;
+}
+
+.chart-bar {
+  height: 320px;
+}
+
+@media (max-width: 720px) {
+  .filtro-fechas {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .graficos-grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -16,6 +16,16 @@
           <span class="material-symbols-outlined">person</span>
           Mi Perfil
         </a>
+        @if (auth.usuario()?.perfil === 'administrador') {
+          <a routerLink="/dashboard/usuarios" routerLinkActive="activo" id="nav-dashboard-usuarios" (click)="cerrarMenu()">
+            <span class="material-symbols-outlined">group</span>
+            Usuarios
+          </a>
+          <a routerLink="/dashboard/estadisticas" routerLinkActive="activo" id="nav-dashboard-estadisticas" (click)="cerrarMenu()">
+            <span class="material-symbols-outlined">bar_chart</span>
+            Estadísticas
+          </a>
+        }
         <button class="btn-cerrar-sesion" id="btn-cerrar-sesion" (click)="cerrarSesion()">
           <span class="material-symbols-outlined">logout</span>
           Salir

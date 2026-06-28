@@ -35,4 +35,22 @@ export class UsuariosService {
     const usuario = await this.usuarioModel.findOne({ nombreUsuario }).exec();
     return !!usuario;
   }
+
+  async listarTodos(): Promise<UsuarioDocument[]> {
+    return this.usuarioModel.find().select('-password').exec();
+  }
+
+  async deshabilitarUsuario(id: string): Promise<UsuarioDocument | null> {
+    return this.usuarioModel
+      .findByIdAndUpdate(id, { activo: false }, { new: true })
+      .select('-password')
+      .exec();
+  }
+
+  async habilitarUsuario(id: string): Promise<UsuarioDocument | null> {
+    return this.usuarioModel
+      .findByIdAndUpdate(id, { activo: true }, { new: true })
+      .select('-password')
+      .exec();
+  }
 }

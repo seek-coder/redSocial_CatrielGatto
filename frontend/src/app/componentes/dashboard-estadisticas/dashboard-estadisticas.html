@@ -1,0 +1,46 @@
+<section class="dashboard-container">
+  <div class="dashboard-wrapper">
+
+    <div class="dashboard-header">
+      <div class="header-icon">📊</div>
+      <p class="header-subtitle">// Panel de Administración</p>
+      <h1 class="header-title">ESTADÍSTICAS</h1>
+    </div>
+
+    <div class="glass-card filtro-fechas">
+      <div class="filtro-grupo">
+        <label class="label" for="est-fecha-inicio">Desde</label>
+        <input id="est-fecha-inicio" type="date" class="input-field"
+               [ngModel]="fechaInicio()"
+               (ngModelChange)="fechaInicio.set($event); onFechaChange()">
+      </div>
+      <div class="filtro-grupo">
+        <label class="label" for="est-fecha-fin">Hasta</label>
+        <input id="est-fecha-fin" type="date" class="input-field"
+               [ngModel]="fechaFin()"
+               (ngModelChange)="fechaFin.set($event); onFechaChange()">
+      </div>
+    </div>
+
+    <div class="graficos-grid">
+      <div class="glass-card grafico-card">
+        <div class="chart-container chart-pie">
+          <canvas #chartPubUsuario></canvas>
+        </div>
+      </div>
+
+      <div class="glass-card grafico-card">
+        <div class="chart-container chart-line">
+          <canvas #chartComentarios></canvas>
+        </div>
+      </div>
+
+      <div class="glass-card grafico-card grafico-ancho">
+        <div class="chart-container chart-bar">
+          <canvas #chartComPub></canvas>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>

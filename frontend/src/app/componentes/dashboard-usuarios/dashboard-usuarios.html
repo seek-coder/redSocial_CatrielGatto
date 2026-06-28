@@ -1,0 +1,251 @@
+<section class="dashboard-container">
+  <div class="dashboard-wrapper">
+
+    <div class="dashboard-header">
+      <div class="header-icon">👤</div>
+      <p class="header-subtitle">// Panel de Administración</p>
+      <h1 class="header-title">GESTIÓN DE USUARIOS</h1>
+    </div>
+
+    <div class="controles-top">
+      <button class="btn-primary btn-nueva" (click)="toggleFormulario()">
+        <span class="material-symbols-outlined">{{ mostrarFormulario() ? 'close' : 'person_add' }}</span>
+        {{ mostrarFormulario() ? 'Cancelar' : 'Nuevo Usuario' }}
+      </button>
+    </div>
+
+    @if (mostrarFormulario()) {
+      <div class="glass-card formulario-usuario">
+        <h3 class="form-titulo">Registrar nuevo usuario</h3>
+
+        <form [formGroup]="registroForm" (ngSubmit)="crearUsuario()">
+
+          <div class="fila">
+            <div class="campo">
+              <label for="admin-nombre" class="label">Nombre</label>
+              <input id="admin-nombre" type="text" formControlName="nombre"
+                     placeholder="Juan" class="input-field" maxlength="30">
+              @if (nombre?.invalid && nombre?.touched) {
+                <p class="error-msg">
+                  @if (nombre?.errors?.['required']) { El nombre es obligatorio. }
+                  @else if (nombre?.errors?.['minlength']) { Mínimo 2 caracteres. }
+                  @else if (nombre?.errors?.['pattern']) { Solo se permiten letras. }
+                </p>
+              }
+            </div>
+
+            <div class="campo">
+              <label for="admin-apellido" class="label">Apellido</label>
+              <input id="admin-apellido" type="text" formControlName="apellido"
+                     placeholder="Pérez" class="input-field" maxlength="30">
+              @if (apellido?.invalid && apellido?.touched) {
+                <p class="error-msg">
+                  @if (apellido?.errors?.['required']) { El apellido es obligatorio. }
+                  @else if (apellido?.errors?.['minlength']) { Mínimo 2 caracteres. }
+                  @else if (apellido?.errors?.['pattern']) { Solo se permiten letras. }
+                </p>
+              }
+            </div>
+          </div>
+
+          <div class="campo">
+            <label for="admin-correo" class="label">Correo electrónico</label>
+            <input id="admin-correo" type="email" formControlName="correo"
+                   placeholder="juan@ejemplo.com" class="input-field" maxlength="100">
+            @if (correo?.invalid && correo?.touched) {
+              <p class="error-msg">
+                @if (correo?.errors?.['required']) { El correo es obligatorio. }
+                @else if (correo?.errors?.['pattern']) { Ingresá un correo válido. }
+              </p>
+            }
+          </div>
+
+          <div class="campo">
+            <label for="admin-usuario" class="label">Nombre de usuario</label>
+            <input id="admin-usuario" type="text" formControlName="nombreUsuario"
+                   placeholder="juan_perez" class="input-field" maxlength="20">
+            @if (nombreUsuario?.invalid && nombreUsuario?.touched) {
+              <p class="error-msg">
+                @if (nombreUsuario?.errors?.['required']) { El nombre de usuario es obligatorio. }
+                @else if (nombreUsuario?.errors?.['minlength']) { Mínimo 3 caracteres. }
+                @else if (nombreUsuario?.errors?.['pattern']) { Solo letras, números y guiones bajos. }
+              </p>
+            }
+          </div>
+
+          <div class="fila">
+            <div class="campo">
+              <label for="admin-password" class="label">Contraseña</label>
+              <input id="admin-password" type="password" formControlName="password"
+                     placeholder="••••••••" class="input-field" maxlength="50">
+              @if (password?.invalid && password?.touched) {
+                <p class="error-msg">
+                  @if (password?.errors?.['required']) { La contraseña es obligatoria. }
+                  @else if (password?.errors?.['minlength']) { Mínimo 8 caracteres. }
+                  @else if (password?.errors?.['pattern']) { Debe tener al menos una mayúscula y un número. }
+                </p>
+              }
+            </div>
+
+            <div class="campo">
+              <label for="admin-repetir" class="label">Repetir contraseña</label>
+              <input id="admin-repetir" type="password" formControlName="repetirPassword"
+                     placeholder="••••••••" class="input-field" maxlength="50">
+              @if (repetirPassword?.touched && registroForm.errors?.['passwordsDistintas']) {
+                <p class="error-msg">Las contraseñas no coinciden.</p>
+              }
+            </div>
+          </div>
+
+          <div class="fila">
+            <div class="campo">
+              <label for="admin-fecha" class="label">Fecha de nacimiento</label>
+              <input id="admin-fecha" type="date" formControlName="fechaNacimiento" class="input-field">
+              @if (fechaNacimiento?.invalid && fechaNacimiento?.touched) {
+                <p class="error-msg">
+                  @if (fechaNacimiento?.errors?.['required']) { La fecha es obligatoria. }
+                  @else if (fechaNacimiento?.errors?.['menorDeEdad']) { Debe tener al menos 13 años. }
+                </p>
+              }
+            </div>
+
+            <div class="campo">
+              <label class="label">Imagen de perfil</label>
+              <div class="file-upload">
+                <label for="admin-imagen" class="file-label">
+                  @if (previewImagen()) {
+                    <img [src]="previewImagen()" alt="Preview" class="preview-img">
+                  } @else {
+                    <span class="material-symbols-outlined">add_photo_alternate</span>
+                    <span class="file-text">Elegir imagen</span>
+                  }
+                </label>
+                <input id="admin-imagen" type="file" accept="image/jpeg,image/png,image/gif,image/webp"
+                       (change)="onArchivoSeleccionado($event)" class="file-input">
+              </div>
+              @if (errorImagen()) {
+                <p class="error-msg">{{ errorImagen() }}</p>
+              }
+            </div>
+          </div>
+
+          <div class="campo">
+            <label for="admin-descripcion" class="label">Descripción breve</label>
+            <textarea id="admin-descripcion" formControlName="descripcion"
+                      placeholder="Descripción del usuario..."
+                      class="input-field textarea" rows="3" maxlength="200"></textarea>
+          </div>
+
+          <div class="campo campo-perfil">
+            <label class="label">Perfil del usuario</label>
+            <div class="radio-group">
+              <label class="radio-option" [class.seleccionado]="perfil?.value === 'usuario'">
+                <input type="radio" formControlName="perfil" value="usuario">
+                <span class="radio-dot"></span>
+                <span class="material-symbols-outlined">person</span>
+                Usuario
+              </label>
+              <label class="radio-option" [class.seleccionado]="perfil?.value === 'administrador'">
+                <input type="radio" formControlName="perfil" value="administrador">
+                <span class="radio-dot"></span>
+                <span class="material-symbols-outlined">admin_panel_settings</span>
+                Administrador
+              </label>
+            </div>
+          </div>
+
+          <button type="submit"
+                  class="btn-green btn-full"
+                  [disabled]="registroForm.invalid || cargando()">
+            @if (cargando()) {
+              CREANDO...
+            } @else {
+              CREAR USUARIO
+            }
+          </button>
+        </form>
+      </div>
+    }
+
+    @if (usuarios().length > 0) {
+      <div class="listado-usuarios">
+        @for (usr of usuarios(); track usr._id) {
+          <div class="glass-card usuario-card" appResaltarHover>
+            <div class="usuario-info">
+              <div class="usuario-avatar-wrapper">
+                @if (usr.imagenPerfil) {
+                  <img [src]="usr.imagenPerfil" alt="Avatar" class="usuario-avatar"
+                       appImagenFallback>
+                } @else {
+                  <div class="usuario-avatar-placeholder">
+                    <span class="material-symbols-outlined">person</span>
+                  </div>
+                }
+              </div>
+              <div class="usuario-datos">
+                <p class="usuario-nombre">{{ usr.nombre }} {{ usr.apellido }}</p>
+                <p class="usuario-username">&#64;{{ usr.nombreUsuario }}</p>
+                <p class="usuario-correo">{{ usr.correo }}</p>
+              </div>
+            </div>
+            <div class="usuario-meta">
+              <span class="badge-perfil" [class.admin]="usr.perfil === 'administrador'">
+                {{ usr.perfil | capitalizarRol }}
+              </span>
+              <span class="badge-estado" [appEstadoUsuario]="usr.activo">
+                {{ usr.activo ? 'Activo' : 'Inactivo' }}
+              </span>
+            </div>
+            <div class="usuario-acciones">
+              @if (usr.activo) {
+                <button class="btn-pink btn-sm" (click)="pedirConfirmacion(usr._id, 'deshabilitar')">
+                  <span class="material-symbols-outlined">block</span>
+                  Deshabilitar
+                </button>
+              } @else {
+                <button class="btn-green btn-sm" (click)="pedirConfirmacion(usr._id, 'habilitar')">
+                  <span class="material-symbols-outlined">check_circle</span>
+                  Habilitar
+                </button>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    } @else {
+      <div class="glass-card contenido-vacio">
+        <span class="material-symbols-outlined icono-vacio">group</span>
+        <p class="texto-vacio">No se encontraron usuarios.</p>
+      </div>
+    }
+
+  </div>
+</section>
+
+@if (idAccion()) {
+  <div class="modal-overlay" (click)="cancelarAccion()">
+    <div class="modal-content glass-card" (click)="$event.stopPropagation()">
+      <span class="material-symbols-outlined modal-icon warn">warning</span>
+      <p class="modal-texto">
+        ¿Estás seguro de que querés {{ accionPendiente() }} a este usuario?
+      </p>
+      <div class="modal-botones">
+        <button class="btn-primary" (click)="cancelarAccion()">Cancelar</button>
+        <button class="btn-pink" (click)="confirmarAccion()">Confirmar</button>
+      </div>
+    </div>
+  </div>
+}
+
+@if (mostrarModal()) {
+  <div class="modal-overlay" (click)="cerrarModal()">
+    <div class="modal-content glass-card" (click)="$event.stopPropagation()"
+         [class.modal-exito]="tipoModal() === 'exito'">
+      <div class="modal-icono">
+        @if (tipoModal() === 'exito') { ✅ } @else { ⚠️ }
+      </div>
+      <p class="modal-texto">{{ mensajeModal() }}</p>
+      <button class="btn-primary" (click)="cerrarModal()">Aceptar</button>
+    </div>
+  </div>
+}

@@ -26,6 +26,7 @@ export class AuthService {
 
   usuario = computed(() => this.usuarioActual());
   estaLogueado = computed(() => this.usuarioActual() !== null);
+  esAdmin = computed(() => this.usuarioActual()?.perfil === 'administrador');
 
   constructor(private http: HttpClient, private router: Router) {}
 

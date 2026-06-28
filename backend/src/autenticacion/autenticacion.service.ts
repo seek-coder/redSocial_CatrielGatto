@@ -60,6 +60,10 @@ export class AutenticacionService {
       throw new UnauthorizedException('Usuario o contraseña incorrectos.');
     }
 
+    if (usuario.activo === false) {
+      throw new UnauthorizedException('Cuenta deshabilitada. Contactá al administrador.');
+    }
+
     const usuarioObj = usuario.toObject();
     delete usuarioObj.password;
 

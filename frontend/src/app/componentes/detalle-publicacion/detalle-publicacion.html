@@ -11,7 +11,7 @@
         <div class="publicacion-header">
           <div class="autor-info">
             @if (pub.autor.imagenPerfil) {
-              <img [src]="pub.autor.imagenPerfil" alt="Avatar" class="autor-avatar">
+              <img [src]="pub.autor.imagenPerfil" alt="Avatar" class="autor-avatar" appImagenFallback>
             } @else {
               <div class="autor-avatar-placeholder">
                 <span class="material-symbols-outlined">person</span>
@@ -19,7 +19,7 @@
             }
             <div>
               <p class="autor-nombre">{{ pub.autor.nombre }} {{ pub.autor.apellido }}</p>
-              <p class="publicacion-fecha">{{ formatearFecha(pub.createdAt) }}</p>
+              <p class="publicacion-fecha">{{ pub.createdAt | fechaRelativa }}</p>
             </div>
           </div>
         </div>
@@ -75,7 +75,7 @@
                 <div class="comentario-header">
                   <div class="comentario-autor-info">
                     @if (comentario.autor.imagenPerfil) {
-                      <img [src]="comentario.autor.imagenPerfil" alt="Avatar" class="comentario-avatar">
+                      <img [src]="comentario.autor.imagenPerfil" alt="Avatar" class="comentario-avatar" appImagenFallback>
                     } @else {
                       <div class="comentario-avatar-placeholder">
                         <span class="material-symbols-outlined">person</span>
@@ -88,7 +88,7 @@
                           <span class="tag-editado">(editado)</span>
                         }
                       </p>
-                      <p class="comentario-fecha">{{ formatearFecha(comentario.createdAt) }}</p>
+                      <p class="comentario-fecha">{{ comentario.createdAt | fechaRelativa }}</p>
                     </div>
                   </div>
 

@@ -4,11 +4,13 @@ import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../servicios/auth.service';
 import { PublicacionesService, Publicacion } from '../../servicios/publicaciones.service';
 import { ComentariosService, Comentario } from '../../servicios/comentarios.service';
+import { FechaRelativaPipe } from '../../pipes/fecha-relativa.pipe';
+import { ImagenFallbackDirective } from '../../directivas/imagen-fallback.directive';
 
 @Component({
   selector: 'app-detalle-publicacion',
   standalone: true,
-  imports: [FormsModule, RouterLink],
+  imports: [FormsModule, RouterLink, FechaRelativaPipe, ImagenFallbackDirective],
   templateUrl: './detalle-publicacion.html',
   styleUrl: './detalle-publicacion.scss'
 })
@@ -164,16 +166,7 @@ export class DetallePublicacionComponent implements OnInit {
     return pub.likes?.includes(usuario._id!) || false;
   }
 
-  formatearFecha(fecha: string): string {
-    const d = new Date(fecha);
-    return d.toLocaleDateString('es-AR', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  }
+
 
   mostrarMensaje(msg: string, error: boolean) {
     this.mensajeModal.set(msg);
