@@ -1,28 +1,26 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from '../src/app.module';
 import { ValidationPipe } from '@nestjs/common';
+import { NestExpressApplication } from '@nestjs/platform-express';
+import cookieParser from 'cookie-parser';
 
 let cachedApp: any;
 
 async function getApp() {
   if (!cachedApp) {
-    cachedApp = await NestFactory.create(AppModule);
+    cachedApp = await NestFactory.create<NestExpressApplication>(AppModule);
+    
+    cachedApp.use(cookieParser());
 
     cachedApp.enableCors({
-      origin: (origin: string, callback: Function) => {
-        const permitidos = [
-          'https://redsocial-dionisos-frontend.vercel.app',
-          'https://red-social-catriel-gatto.vercel.app',
-          'http://localhost:4200',
-        ];
-        // Aceptar URLs de preview de Vercel del proyecto
-        if (!origin || permitidos.includes(origin) || origin.includes('seek-coders-projects.vercel.app')) {
-          callback(null, true);
-        } else {
-          callback(new Error('Bloqueado por CORS'));
-        }
-      },
+      origin: [
+        'https://redsocial-dionisos-frontend.vercel.app',
+        'https://red-social-catriel-gatto.vercel.app',
+        'http://localhost:4200',
+      ],
       credentials: true,
+      methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+      allowedHeaders: 'Content-Type, Accept, Authorization',
     });
 
     cachedApp.useGlobalPipes(new ValidationPipe({
@@ -36,7 +34,15 @@ async function getApp() {
 }
 
 export default async (req: any, res: any) => {
+  if (req.method === 'OPTIONS') {
+    res.setHeader('Access-Control-Allow-Origin', 'https://redsocial-dionisos-frontend.vercel.app');
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
+    res.setHeader('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization');
+    return res.status(200).end();
+  }
+
   const app = await getApp();
   const instance = app.getHttpAdapter().getInstance();
-  instance(req, res);
+  return instance(req, res);
 };
