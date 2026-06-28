@@ -2,7 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from '../src/app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { NestExpressApplication } from '@nestjs/platform-express';
-import cookieParser from 'cookie-parser';
+const cookieParser = require('cookie-parser');
 
 let cachedApp: any;
 
@@ -42,7 +42,12 @@ export default async (req: any, res: any) => {
     return res.status(200).end();
   }
 
-  const app = await getApp();
-  const instance = app.getHttpAdapter().getInstance();
-  return instance(req, res);
+  try {
+    const app = await getApp();
+    const instance = app.getHttpAdapter().getInstance();
+    return instance(req, res);
+  } catch (error) {
+    console.error('Error starting NestJS app on Vercel:', error);
+    return res.status(500).json({ error: 'Internal Server Error (Vercel)' });
+  }
 };
