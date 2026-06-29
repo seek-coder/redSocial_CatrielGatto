@@ -173,14 +173,8 @@
           <div class="glass-card usuario-card" appResaltarHover>
             <div class="usuario-info">
               <div class="usuario-avatar-wrapper">
-                @if (usr.imagenPerfil) {
-                  <img [src]="usr.imagenPerfil" alt="Avatar" class="usuario-avatar"
+                  <img [src]="usr.imagenPerfil || ''" alt="Avatar" class="usuario-avatar"
                        appImagenFallback>
-                } @else {
-                  <div class="usuario-avatar-placeholder">
-                    <span class="material-symbols-outlined">person</span>
-                  </div>
-                }
               </div>
               <div class="usuario-datos">
                 <p class="usuario-nombre">{{ usr.nombre }} {{ usr.apellido }}</p>
