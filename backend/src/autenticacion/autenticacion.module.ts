@@ -9,7 +9,7 @@ import { UsuariosModule } from '../usuarios/usuarios.module';
     forwardRef(() => UsuariosModule),
     JwtModule.register({
       secret: process.env['JWT_SECRET'] || 'dionisos_clave_secreta_2024',
-      signOptions: { expiresIn: '1m' },
+      signOptions: { expiresIn: '15m' },
     }),
   ],
   controllers: [AutenticacionController],

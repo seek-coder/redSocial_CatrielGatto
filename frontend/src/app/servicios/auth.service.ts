@@ -108,8 +108,8 @@ export class AuthService {
 
       this.timerExpiracion = setTimeout(() => {
         this.cerrarSesion();
-      }, 30 * 1000); // A los 30 segundos expira, para que el profe pueda verificarlo mejor y más rápido
-    }, 30 * 1000); // Muestra el modal a los 30 segundos, para lo mismo
+      }, 3 * 60 * 1000);
+    }, 12 * 60 * 1000);
   }
 
   private limpiarTimers() {
