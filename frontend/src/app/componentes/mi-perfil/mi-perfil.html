@@ -12,13 +12,7 @@
 
         <div class="perfil-top">
           <div class="avatar-container">
-            @if (usuario.imagenPerfil) {
-              <img [src]="obtenerUrlImagen(usuario)" alt="Foto de perfil" class="avatar-img">
-            } @else {
-              <div class="avatar-placeholder">
-                <span class="material-symbols-outlined">person</span>
-              </div>
-            }
+            <img [src]="obtenerUrlImagen(usuario)" alt="Foto de perfil" class="avatar-img" appImagenFallback>
           </div>
 
           <div class="perfil-info-principal">

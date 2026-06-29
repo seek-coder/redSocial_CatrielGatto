@@ -2,11 +2,12 @@ import { Component, signal, OnInit } from '@angular/core';
 import { AuthService, Usuario } from '../../servicios/auth.service';
 import { PublicacionesService, Publicacion } from '../../servicios/publicaciones.service';
 import { PublicacionComponent } from '../publicacion/publicacion';
+import { ImagenFallbackDirective } from '../../directivas/imagen-fallback.directive';
 
 @Component({
   selector: 'app-mi-perfil',
   standalone: true,
-  imports: [PublicacionComponent],
+  imports: [PublicacionComponent, ImagenFallbackDirective],
   templateUrl: './mi-perfil.html',
   styleUrl: './mi-perfil.scss'
 })
