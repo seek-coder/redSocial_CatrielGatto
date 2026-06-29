@@ -12,7 +12,7 @@ export class ResaltarHoverDirective {
   @HostListener('mouseenter')
   onMouseEnter() {
     this.el.nativeElement.style.borderColor = this.appResaltarHover;
-    this.el.nativeElement.style.boxShadow = `0 0 12px ${this.appResaltarHover}40`;
+    this.el.nativeElement.style.boxShadow = `0 8px 32px rgba(0,0,0,0.4), 0 0 20px ${this.appResaltarHover}66, 0 0 40px ${this.appResaltarHover}33`;
     this.el.nativeElement.style.transition = 'border-color 0.3s, box-shadow 0.3s';
   }
 
