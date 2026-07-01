@@ -13,10 +13,8 @@ export class CargaComponent implements OnInit {
 
   constructor(private auth: AuthService, private router: Router) {}
 
-  async ngOnInit() {
-    const resultado = await this.auth.autorizar();
-
-    if (resultado.ok) {
+  ngOnInit() {
+    if (this.auth.estaLogueado()) {
       this.router.navigate(['/publicaciones']);
     } else {
       this.router.navigate(['/login']);
