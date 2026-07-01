@@ -5,7 +5,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import { Model } from 'mongoose';
 import { Publicacion, PublicacionDocument } from './publicacion.schema';
 import { Comentario, ComentarioDocument } from '../comentarios/comentario.schema';
 import { AdminGuard } from '../guards/admin.guard';
@@ -67,17 +67,27 @@ export class EstadisticasController {
     @Query('fechaInicio') fechaInicio: string,
     @Query('fechaFin') fechaFin: string,
   ) {
-    const filtro: any = {};
+    const filtroFecha: any = {};
 
     if (fechaInicio && fechaFin) {
-      filtro.createdAt = {
+      filtroFecha.createdAt = {
         $gte: new Date(fechaInicio),
         $lte: new Date(new Date(fechaFin).setHours(23, 59, 59, 999)),
       };
     }
 
     const resultado = await this.comentarioModel.aggregate([
-      { $match: filtro },
+      { $match: filtroFecha },
+      {
+        $lookup: {
+          from: 'publicacions',
+          localField: 'publicacion',
+          foreignField: '_id',
+          as: 'pub',
+        },
+      },
+      { $unwind: '$pub' },
+      { $match: { 'pub.activa': true } },
       {
         $group: {
           _id: {
@@ -104,17 +114,17 @@ export class EstadisticasController {
     @Query('fechaInicio') fechaInicio: string,
     @Query('fechaFin') fechaFin: string,
   ) {
-    const filtro: any = {};
+    const filtroFecha: any = {};
 
     if (fechaInicio && fechaFin) {
-      filtro.createdAt = {
+      filtroFecha.createdAt = {
         $gte: new Date(fechaInicio),
         $lte: new Date(new Date(fechaFin).setHours(23, 59, 59, 999)),
       };
     }
 
     const resultado = await this.comentarioModel.aggregate([
-      { $match: filtro },
+      { $match: filtroFecha },
       {
         $group: {
           _id: '$publicacion',
@@ -129,11 +139,12 @@ export class EstadisticasController {
           as: 'pub',
         },
       },
-      { $unwind: { path: '$pub', preserveNullAndEmptyArrays: true } },
+      { $unwind: '$pub' },
+      { $match: { 'pub.activa': true } },
       {
         $project: {
           _id: 0,
-          publicacion: { $ifNull: ['$pub.titulo', 'Publicación eliminada'] },
+          publicacion: '$pub.titulo',
           cantidad: 1,
         },
       },
