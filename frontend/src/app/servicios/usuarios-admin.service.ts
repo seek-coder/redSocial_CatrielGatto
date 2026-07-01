@@ -36,6 +36,6 @@ export class UsuariosAdminService {
   }
 
   habilitar(id: string) {
-    return this.http.post<{ mensaje: string; usuario: UsuarioAdmin }>(`${this.apiUrl}/${id}/activar`, {});
+    return this.http.post<{ mensaje: string; usuario: UsuarioAdmin }>(`${this.apiUrl}/${id}/habilitar`, {});
   }
 }

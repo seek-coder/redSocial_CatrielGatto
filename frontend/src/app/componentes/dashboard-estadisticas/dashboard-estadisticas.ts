@@ -21,6 +21,13 @@ export class DashboardEstadisticasComponent implements OnInit, AfterViewInit, On
   fechaInicio = signal('');
   fechaFin = signal('');
 
+  totalPublicaciones = signal(0);
+  totalComentarios = signal(0);
+
+  sinDatosPub = signal(false);
+  sinDatosComentarios = signal(false);
+  sinDatosComPub = signal(false);
+
   private chartPubUsuario: Chart | null = null;
   private chartComentarios: Chart | null = null;
   private chartComPub: Chart | null = null;
@@ -63,45 +70,146 @@ export class DashboardEstadisticasComponent implements OnInit, AfterViewInit, On
     this.cargarComentariosPorPublicacion();
   }
 
+  private crearChartPub(datos: { usuario: string; cantidad: number }[]) {
+    const labels = datos.map(d => d.usuario);
+    const values = datos.map(d => d.cantidad);
+    this.chartPubUsuario = new Chart(this.chartPubUsuarioRef.nativeElement, {
+      type: 'pie',
+      data: {
+        labels,
+        datasets: [{
+          data: values,
+          backgroundColor: this.colores.slice(0, labels.length),
+          borderColor: '#1a0f14',
+          borderWidth: 2,
+        }],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: {
+              color: '#e8ddd0',
+              font: { family: 'Inter', size: 11 },
+              padding: 12,
+            },
+          },
+          title: {
+            display: true,
+            text: 'Publicaciones por usuario',
+            color: '#c9a96e',
+            font: { family: 'Playfair Display', size: 14, weight: 'bold' as const },
+          },
+        },
+      },
+    });
+  }
+
+  private crearChartComentarios(datos: { fecha: string; cantidad: number }[]) {
+    const labels = datos.map(d => d.fecha);
+    const values = datos.map(d => d.cantidad);
+    this.chartComentarios = new Chart(this.chartComentariosRef.nativeElement, {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [{
+          label: 'Comentarios',
+          data: values,
+          borderColor: '#c9a96e',
+          backgroundColor: 'rgba(201, 169, 110, 0.15)',
+          fill: true,
+          tension: 0.4,
+          pointBackgroundColor: '#c9a96e',
+          pointBorderColor: '#1a0f14',
+          pointBorderWidth: 2,
+          pointRadius: 4,
+        }],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          x: {
+            ticks: { color: '#8a7080', font: { family: 'Inter', size: 10 } },
+            grid: { color: 'rgba(138, 112, 128, 0.1)' },
+          },
+          y: {
+            beginAtZero: true,
+            ticks: { color: '#8a7080', font: { family: 'Inter', size: 10 }, stepSize: 1 },
+            grid: { color: 'rgba(138, 112, 128, 0.1)' },
+          },
+        },
+        plugins: {
+          legend: { labels: { color: '#e8ddd0', font: { family: 'Inter', size: 11 } } },
+          title: {
+            display: true,
+            text: 'Comentarios por día',
+            color: '#c9a96e',
+            font: { family: 'Playfair Display', size: 14, weight: 'bold' as const },
+          },
+        },
+      },
+    });
+  }
+
+  private crearChartComPub(datos: { publicacion: string; cantidad: number }[]) {
+    const labels = datos.map(d => d.publicacion.length > 25 ? d.publicacion.substring(0, 25) + '...' : d.publicacion);
+    const values = datos.map(d => d.cantidad);
+    this.chartComPub = new Chart(this.chartComPubRef.nativeElement, {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [{
+          label: 'Comentarios',
+          data: values,
+          backgroundColor: this.colores.slice(0, labels.length).map(c => c + '80'),
+          borderColor: this.colores.slice(0, labels.length),
+          borderWidth: 1,
+          borderRadius: 6,
+        }],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        indexAxis: 'y',
+        scales: {
+          x: {
+            beginAtZero: true,
+            ticks: { color: '#8a7080', font: { family: 'Inter', size: 10 }, stepSize: 1 },
+            grid: { color: 'rgba(138, 112, 128, 0.1)' },
+          },
+          y: {
+            ticks: { color: '#e8ddd0', font: { family: 'Inter', size: 10 } },
+            grid: { color: 'rgba(138, 112, 128, 0.05)' },
+          },
+        },
+        plugins: {
+          legend: { display: false },
+          title: {
+            display: true,
+            text: 'Comentarios por publicación (top 10)',
+            color: '#c9a96e',
+            font: { family: 'Playfair Display', size: 14, weight: 'bold' as const },
+          },
+        },
+      },
+    });
+  }
+
   private cargarPublicacionesPorUsuario() {
     this.estadisticasService.publicacionesPorUsuario(this.fechaInicio(), this.fechaFin()).subscribe({
       next: (datos) => {
-        const labels = datos.map(d => d.usuario);
-        const values = datos.map(d => d.cantidad);
-
+        this.totalPublicaciones.set(datos.reduce((acc, d) => acc + d.cantidad, 0));
         this.chartPubUsuario?.destroy();
-        this.chartPubUsuario = new Chart(this.chartPubUsuarioRef.nativeElement, {
-          type: 'pie',
-          data: {
-            labels,
-            datasets: [{
-              data: values,
-              backgroundColor: this.colores.slice(0, labels.length),
-              borderColor: '#1a0f14',
-              borderWidth: 2,
-            }],
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-              legend: {
-                position: 'bottom',
-                labels: {
-                  color: '#e8ddd0',
-                  font: { family: 'Inter', size: 11 },
-                  padding: 12,
-                },
-              },
-              title: {
-                display: true,
-                text: 'Publicaciones por usuario',
-                color: '#c9a96e',
-                font: { family: 'Playfair Display', size: 14, weight: 'bold' as const },
-              },
-            },
-          },
-        });
+        this.chartPubUsuario = null;
+        if (datos.length === 0) {
+          this.sinDatosPub.set(true);
+          return;
+        }
+        this.sinDatosPub.set(false);
+        setTimeout(() => this.crearChartPub(datos), 0);
       },
     });
   }
@@ -109,61 +217,15 @@ export class DashboardEstadisticasComponent implements OnInit, AfterViewInit, On
   private cargarComentariosTotales() {
     this.estadisticasService.comentariosTotales(this.fechaInicio(), this.fechaFin()).subscribe({
       next: (datos) => {
-        const labels = datos.map(d => d.fecha);
-        const values = datos.map(d => d.cantidad);
-
+        this.totalComentarios.set(datos.reduce((acc, d) => acc + d.cantidad, 0));
         this.chartComentarios?.destroy();
-        this.chartComentarios = new Chart(this.chartComentariosRef.nativeElement, {
-          type: 'line',
-          data: {
-            labels,
-            datasets: [{
-              label: 'Comentarios',
-              data: values,
-              borderColor: '#c9a96e',
-              backgroundColor: 'rgba(201, 169, 110, 0.15)',
-              fill: true,
-              tension: 0.4,
-              pointBackgroundColor: '#c9a96e',
-              pointBorderColor: '#1a0f14',
-              pointBorderWidth: 2,
-              pointRadius: 4,
-            }],
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-              x: {
-                ticks: { color: '#8a7080', font: { family: 'Inter', size: 10 } },
-                grid: { color: 'rgba(138, 112, 128, 0.1)' },
-              },
-              y: {
-                beginAtZero: true,
-                ticks: {
-                  color: '#8a7080',
-                  font: { family: 'Inter', size: 10 },
-                  stepSize: 1,
-                },
-                grid: { color: 'rgba(138, 112, 128, 0.1)' },
-              },
-            },
-            plugins: {
-              legend: {
-                labels: {
-                  color: '#e8ddd0',
-                  font: { family: 'Inter', size: 11 },
-                },
-              },
-              title: {
-                display: true,
-                text: 'Comentarios por día',
-                color: '#c9a96e',
-                font: { family: 'Playfair Display', size: 14, weight: 'bold' as const },
-              },
-            },
-          },
-        });
+        this.chartComentarios = null;
+        if (datos.length === 0) {
+          this.sinDatosComentarios.set(true);
+          return;
+        }
+        this.sinDatosComentarios.set(false);
+        setTimeout(() => this.crearChartComentarios(datos), 0);
       },
     });
   }
@@ -171,56 +233,14 @@ export class DashboardEstadisticasComponent implements OnInit, AfterViewInit, On
   private cargarComentariosPorPublicacion() {
     this.estadisticasService.comentariosPorPublicacion(this.fechaInicio(), this.fechaFin()).subscribe({
       next: (datos) => {
-        const labels = datos.map(d => d.publicacion.length > 25 ? d.publicacion.substring(0, 25) + '...' : d.publicacion);
-        const values = datos.map(d => d.cantidad);
-
         this.chartComPub?.destroy();
-        this.chartComPub = new Chart(this.chartComPubRef.nativeElement, {
-          type: 'bar',
-          data: {
-            labels,
-            datasets: [{
-              label: 'Comentarios',
-              data: values,
-              backgroundColor: this.colores.slice(0, labels.length).map(c => c + '80'),
-              borderColor: this.colores.slice(0, labels.length),
-              borderWidth: 1,
-              borderRadius: 6,
-            }],
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            indexAxis: 'y',
-            scales: {
-              x: {
-                beginAtZero: true,
-                ticks: {
-                  color: '#8a7080',
-                  font: { family: 'Inter', size: 10 },
-                  stepSize: 1,
-                },
-                grid: { color: 'rgba(138, 112, 128, 0.1)' },
-              },
-              y: {
-                ticks: {
-                  color: '#e8ddd0',
-                  font: { family: 'Inter', size: 10 },
-                },
-                grid: { color: 'rgba(138, 112, 128, 0.05)' },
-              },
-            },
-            plugins: {
-              legend: { display: false },
-              title: {
-                display: true,
-                text: 'Comentarios por publicación',
-                color: '#c9a96e',
-                font: { family: 'Playfair Display', size: 14, weight: 'bold' as const },
-              },
-            },
-          },
-        });
+        this.chartComPub = null;
+        if (datos.length === 0) {
+          this.sinDatosComPub.set(true);
+          return;
+        }
+        this.sinDatosComPub.set(false);
+        setTimeout(() => this.crearChartComPub(datos), 0);
       },
     });
   }

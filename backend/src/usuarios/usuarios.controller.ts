@@ -112,7 +112,7 @@ export class UsuariosController {
     return { mensaje: 'Usuario deshabilitado correctamente.', usuario };
   }
 
-  @Post(':id/activar')
+  @Post(':id/habilitar')
   @HttpCode(HttpStatus.OK)
   async habilitar(@Param('id') id: string) {
     const usuario = await this.usuariosService.habilitarUsuario(id);

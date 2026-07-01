@@ -79,13 +79,8 @@ export class AutenticacionController {
     if (!token) {
       throw new UnauthorizedException('No se encontró el token.');
     }
-    const payload = this.autenticacionService.validarToken(token);
-    return {
-      _id: payload.sub,
-      correo: payload.correo,
-      nombreUsuario: payload.nombreUsuario,
-      perfil: payload.perfil,
-    };
+    const usuario = await this.autenticacionService.autorizarYObtenerUsuario(token);
+    return usuario;
   }
 
   @Post('refrescar')
@@ -102,5 +97,46 @@ export class AutenticacionController {
     const nuevoToken = this.autenticacionService.refrescarToken(payload);
     res.cookie('token', nuevoToken, COOKIE_OPTIONS);
     return { mensaje: 'Sesión extendida.' };
+  }
+
+  @Post('perfil')
+  @HttpCode(HttpStatus.OK)
+  @UseInterceptors(
+    FileInterceptor('imagenPerfil', {
+      storage: memoryStorage(),
+      fileFilter: (_req, file, cb) => {
+        if (!file.mimetype.match(/\/(jpg|jpeg|png|gif|webp)$/)) {
+          cb(new Error('Solo se permiten imágenes.'), false);
+        } else {
+          cb(null, true);
+        }
+      },
+      limits: { fileSize: 2 * 1024 * 1024 },
+    }),
+  )
+  async editarPerfil(
+    @Req() req: express.Request,
+    @Body()
+    body: {
+      nombre?: string;
+      apellido?: string;
+      descripcion?: string;
+      fechaNacimiento?: string;
+    },
+    @UploadedFile() archivo: Express.Multer.File,
+  ) {
+    const token = req.cookies?.['token'];
+    if (!token) {
+      throw new UnauthorizedException('No se encontró el token.');
+    }
+    const payload = this.autenticacionService.validarToken(token);
+
+    let imagenUrl: string | undefined;
+    if (archivo) {
+      imagenUrl = await this.cloudinaryService.subirImagen(archivo);
+    }
+
+    const usuario = await this.autenticacionService.editarPerfil(payload.sub, body, imagenUrl);
+    return { mensaje: 'Perfil actualizado correctamente.', usuario };
   }
 }

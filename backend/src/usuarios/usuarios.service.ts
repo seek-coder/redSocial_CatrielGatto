@@ -53,4 +53,11 @@ export class UsuariosService {
       .select('-password')
       .exec();
   }
+
+  async actualizar(id: string, datos: Partial<Usuario>): Promise<UsuarioDocument | null> {
+    return this.usuarioModel
+      .findByIdAndUpdate(id, { $set: datos }, { new: true })
+      .select('-password')
+      .exec();
+  }
 }

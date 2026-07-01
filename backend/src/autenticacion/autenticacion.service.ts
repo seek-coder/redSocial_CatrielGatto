@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException, UnauthorizedException } from '@nestjs/common';
+import { Injectable, BadRequestException, UnauthorizedException, NotFoundException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
 import { UsuariosService } from '../usuarios/usuarios.service';
@@ -77,6 +77,36 @@ export class AutenticacionService {
     } catch {
       throw new UnauthorizedException('Token inválido o expirado.');
     }
+  }
+
+  async autorizarYObtenerUsuario(token: string) {
+    const payload = this.validarToken(token);
+    const usuario = await this.usuariosService.buscarPorId(payload.sub);
+    if (!usuario || usuario.activo === false) {
+      throw new UnauthorizedException('Sesión inválida o cuenta deshabilitada.');
+    }
+    const obj = usuario.toObject();
+    delete obj.password;
+    return obj;
+  }
+
+  async editarPerfil(
+    usuarioId: string,
+    datos: { nombre?: string; apellido?: string; descripcion?: string; fechaNacimiento?: string },
+    imagenUrl?: string,
+  ) {
+    const actualizacion: any = {};
+    if (datos.nombre) actualizacion.nombre = datos.nombre;
+    if (datos.apellido) actualizacion.apellido = datos.apellido;
+    if (datos.descripcion !== undefined) actualizacion.descripcion = datos.descripcion;
+    if (datos.fechaNacimiento) actualizacion.fechaNacimiento = datos.fechaNacimiento;
+    if (imagenUrl) actualizacion.imagenPerfil = imagenUrl;
+
+    const usuario = await this.usuariosService.actualizar(usuarioId, actualizacion);
+    if (!usuario) {
+      throw new NotFoundException('Usuario no encontrado.');
+    }
+    return usuario;
   }
 
   refrescarToken(payload: any) {

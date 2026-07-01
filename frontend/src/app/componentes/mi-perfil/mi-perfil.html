@@ -8,47 +8,144 @@
     </div>
 
     @if (auth.usuario(); as usuario) {
-      <div class="glass-card perfil-card">
 
-        <div class="perfil-top">
-          <div class="avatar-container">
-            <img [src]="obtenerUrlImagen(usuario)" alt="Foto de perfil" class="avatar-img" appImagenFallback>
+      @if (!modoEdicion()) {
+
+        <div class="glass-card perfil-card">
+
+          <div class="perfil-top">
+            <div class="avatar-container">
+              <img [src]="obtenerUrlImagen(usuario)" alt="Foto de perfil" class="avatar-img" appImagenFallback>
+            </div>
+
+            <div class="perfil-info-principal">
+              <h2 class="perfil-nombre">{{ usuario.nombre }} {{ usuario.apellido }}</h2>
+              <p class="perfil-username">&#64;{{ usuario.nombreUsuario }}</p>
+              <span class="perfil-badge">{{ usuario.perfil }}</span>
+            </div>
           </div>
 
-          <div class="perfil-info-principal">
-            <h2 class="perfil-nombre">{{ usuario.nombre }} {{ usuario.apellido }}</h2>
-            <p class="perfil-username">&#64;{{ usuario.nombreUsuario }}</p>
-            <span class="perfil-badge">{{ usuario.perfil }}</span>
+          <div class="perfil-detalles">
+            <div class="detalle-item">
+              <span class="material-symbols-outlined">mail</span>
+              <div>
+                <p class="detalle-label">Correo</p>
+                <p class="detalle-valor">{{ usuario.correo }}</p>
+              </div>
+            </div>
+
+            <div class="detalle-item">
+              <span class="material-symbols-outlined">calendar_month</span>
+              <div>
+                <p class="detalle-label">Fecha de nacimiento</p>
+                <p class="detalle-valor">{{ usuario.fechaNacimiento }}</p>
+              </div>
+            </div>
+
+            <div class="detalle-item">
+              <span class="material-symbols-outlined">description</span>
+              <div>
+                <p class="detalle-label">Descripción</p>
+                <p class="detalle-valor">{{ usuario.descripcion || '—' }}</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="perfil-acciones">
+            <button class="btn-editar" id="btn-editar-perfil" (click)="abrirEdicion()">
+              <span class="material-symbols-outlined">edit</span>
+              Editar perfil
+            </button>
+          </div>
+
+        </div>
+
+      } @else {
+
+        <div class="glass-card perfil-card edicion-card">
+          <div class="edicion-header">
+            <span class="material-symbols-outlined edicion-icon">manage_accounts</span>
+            <h2 class="edicion-titulo">Editar Perfil</h2>
+          </div>
+
+          <div class="avatar-edicion">
+            <img
+              [src]="formEdicion().imagenPrevia || obtenerUrlImagen(usuario)"
+              alt="Vista previa"
+              class="avatar-img"
+              appImagenFallback>
+            <label class="btn-cambiar-foto" for="input-foto-perfil">
+              <span class="material-symbols-outlined">photo_camera</span>
+              Cambiar foto
+            </label>
+            <input
+              id="input-foto-perfil"
+              type="file"
+              accept="image/*"
+              class="input-oculto"
+              (change)="onImagenSeleccionada($event)">
+          </div>
+
+          <div class="form-edicion">
+            <div class="form-fila">
+              <div class="form-grupo">
+                <label class="label" for="edit-nombre">Nombre</label>
+                <input
+                  id="edit-nombre"
+                  type="text"
+                  class="input-field"
+                  [ngModel]="formEdicion().nombre"
+                  (ngModelChange)="formEdicion.update(f => ({...f, nombre: $event}))">
+              </div>
+              <div class="form-grupo">
+                <label class="label" for="edit-apellido">Apellido</label>
+                <input
+                  id="edit-apellido"
+                  type="text"
+                  class="input-field"
+                  [ngModel]="formEdicion().apellido"
+                  (ngModelChange)="formEdicion.update(f => ({...f, apellido: $event}))">
+              </div>
+            </div>
+
+            <div class="form-grupo">
+              <label class="label" for="edit-fecha">Fecha de nacimiento</label>
+              <input
+                id="edit-fecha"
+                type="date"
+                class="input-field"
+                [ngModel]="formEdicion().fechaNacimiento"
+                (ngModelChange)="formEdicion.update(f => ({...f, fechaNacimiento: $event}))">
+            </div>
+
+            <div class="form-grupo">
+              <label class="label" for="edit-desc">Descripción</label>
+              <textarea
+                id="edit-desc"
+                class="input-field textarea-desc"
+                rows="3"
+                [ngModel]="formEdicion().descripcion"
+                (ngModelChange)="formEdicion.update(f => ({...f, descripcion: $event}))"></textarea>
+            </div>
+          </div>
+
+          <div class="edicion-botones">
+            <button class="btn-primary" id="btn-cancelar-edicion" (click)="cerrarEdicion()" [disabled]="guardando()">
+              Cancelar
+            </button>
+            <button class="btn-guardar" id="btn-guardar-perfil" (click)="guardarCambios()" [disabled]="guardando()">
+              @if (guardando()) {
+                <span class="material-symbols-outlined spin">sync</span>
+                Guardando...
+              } @else {
+                <span class="material-symbols-outlined">save</span>
+                Guardar
+              }
+            </button>
           </div>
         </div>
 
-        <div class="perfil-detalles">
-          <div class="detalle-item">
-            <span class="material-symbols-outlined">mail</span>
-            <div>
-              <p class="detalle-label">Correo</p>
-              <p class="detalle-valor">{{ usuario.correo }}</p>
-            </div>
-          </div>
-
-          <div class="detalle-item">
-            <span class="material-symbols-outlined">calendar_month</span>
-            <div>
-              <p class="detalle-label">Fecha de nacimiento</p>
-              <p class="detalle-valor">{{ usuario.fechaNacimiento }}</p>
-            </div>
-          </div>
-
-          <div class="detalle-item">
-            <span class="material-symbols-outlined">description</span>
-            <div>
-              <p class="detalle-label">Descripción</p>
-              <p class="detalle-valor">{{ usuario.descripcion }}</p>
-            </div>
-          </div>
-        </div>
-
-      </div>
+      }
 
       <div class="mis-publicaciones-section">
         <h3 class="seccion-titulo">

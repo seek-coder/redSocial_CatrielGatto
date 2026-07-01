@@ -7,6 +7,23 @@
       <h1 class="header-title">ESTADÍSTICAS</h1>
     </div>
 
+    <div class="resumen-cards">
+      <div class="glass-card resumen-card">
+        <span class="material-symbols-outlined resumen-icon">article</span>
+        <div class="resumen-info">
+          <p class="resumen-label">Publicaciones</p>
+          <p class="resumen-valor">{{ totalPublicaciones() }}</p>
+        </div>
+      </div>
+      <div class="glass-card resumen-card">
+        <span class="material-symbols-outlined resumen-icon">chat</span>
+        <div class="resumen-info">
+          <p class="resumen-label">Comentarios</p>
+          <p class="resumen-valor">{{ totalComentarios() }}</p>
+        </div>
+      </div>
+    </div>
+
     <div class="glass-card filtro-fechas">
       <div class="filtro-grupo">
         <label class="label" for="est-fecha-inicio">Desde</label>
@@ -23,23 +40,46 @@
     </div>
 
     <div class="graficos-grid">
+
       <div class="glass-card grafico-card">
-        <div class="chart-container chart-pie">
-          <canvas #chartPubUsuario></canvas>
-        </div>
+        @if (sinDatosPub()) {
+          <div class="sin-datos">
+            <span class="material-symbols-outlined sin-datos-icon">insert_chart</span>
+            <p class="sin-datos-texto">Sin publicaciones en el período</p>
+          </div>
+        } @else {
+          <div class="chart-container chart-pie">
+            <canvas #chartPubUsuario></canvas>
+          </div>
+        }
       </div>
 
       <div class="glass-card grafico-card">
-        <div class="chart-container chart-line">
-          <canvas #chartComentarios></canvas>
-        </div>
+        @if (sinDatosComentarios()) {
+          <div class="sin-datos">
+            <span class="material-symbols-outlined sin-datos-icon">chat_bubble</span>
+            <p class="sin-datos-texto">Sin comentarios en el período</p>
+          </div>
+        } @else {
+          <div class="chart-container chart-line">
+            <canvas #chartComentarios></canvas>
+          </div>
+        }
       </div>
 
       <div class="glass-card grafico-card grafico-ancho">
-        <div class="chart-container chart-bar">
-          <canvas #chartComPub></canvas>
-        </div>
+        @if (sinDatosComPub()) {
+          <div class="sin-datos">
+            <span class="material-symbols-outlined sin-datos-icon">bar_chart</span>
+            <p class="sin-datos-texto">Sin comentarios por publicación en el período</p>
+          </div>
+        } @else {
+          <div class="chart-container chart-bar">
+            <canvas #chartComPub></canvas>
+          </div>
+        }
       </div>
+
     </div>
 
   </div>

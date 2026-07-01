@@ -1,0 +1,3 @@
+- Poder editar mi perfil
+- Dashboard de estadísticas que funcione bien, publicaciones y comentarios (que se actualice si se borran las publicaciones)
+- Cuando actualizado logeado se sale la sesión, arreglar

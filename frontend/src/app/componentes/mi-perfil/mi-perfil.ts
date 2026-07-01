@@ -1,4 +1,5 @@
 import { Component, signal, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { AuthService, Usuario } from '../../servicios/auth.service';
 import { PublicacionesService, Publicacion } from '../../servicios/publicaciones.service';
 import { PublicacionComponent } from '../publicacion/publicacion';
@@ -7,7 +8,7 @@ import { ImagenFallbackDirective } from '../../directivas/imagen-fallback.direct
 @Component({
   selector: 'app-mi-perfil',
   standalone: true,
-  imports: [PublicacionComponent, ImagenFallbackDirective],
+  imports: [PublicacionComponent, ImagenFallbackDirective, FormsModule],
   templateUrl: './mi-perfil.html',
   styleUrl: './mi-perfil.scss'
 })
@@ -20,6 +21,25 @@ export class MiPerfilComponent implements OnInit {
   esError = signal(false);
 
   idAEliminar = signal<string | null>(null);
+
+  modoEdicion = signal(false);
+  guardando = signal(false);
+
+  formEdicion = signal<{
+    nombre: string;
+    apellido: string;
+    descripcion: string;
+    fechaNacimiento: string;
+    imagenPrevia: string | null;
+    archivoImagen: File | null;
+  }>({
+    nombre: '',
+    apellido: '',
+    descripcion: '',
+    fechaNacimiento: '',
+    imagenPrevia: null,
+    archivoImagen: null,
+  });
 
   constructor(
     public auth: AuthService,
@@ -43,6 +63,67 @@ export class MiPerfilComponent implements OnInit {
 
   obtenerUrlImagen(usuario: Usuario): string {
     return usuario.imagenPerfil || '';
+  }
+
+  abrirEdicion() {
+    const u = this.auth.usuario();
+    if (!u) return;
+    this.formEdicion.set({
+      nombre: u.nombre,
+      apellido: u.apellido,
+      descripcion: u.descripcion,
+      fechaNacimiento: u.fechaNacimiento,
+      imagenPrevia: null,
+      archivoImagen: null,
+    });
+    this.modoEdicion.set(true);
+  }
+
+  cerrarEdicion() {
+    this.modoEdicion.set(false);
+  }
+
+  onImagenSeleccionada(evento: Event) {
+    const input = evento.target as HTMLInputElement;
+    const archivo = input.files?.[0];
+    if (!archivo) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      this.formEdicion.update(f => ({
+        ...f,
+        imagenPrevia: e.target?.result as string,
+        archivoImagen: archivo,
+      }));
+    };
+    reader.readAsDataURL(archivo);
+  }
+
+  guardarCambios() {
+    const form = this.formEdicion();
+    this.guardando.set(true);
+
+    const formData = new FormData();
+    formData.append('nombre', form.nombre);
+    formData.append('apellido', form.apellido);
+    formData.append('descripcion', form.descripcion);
+    formData.append('fechaNacimiento', form.fechaNacimiento);
+    if (form.archivoImagen) {
+      formData.append('imagenPerfil', form.archivoImagen);
+    }
+
+    this.auth.editarPerfil(formData).subscribe({
+      next: (res) => {
+        this.auth.actualizarUsuarioLocal(res.usuario as Usuario);
+        this.guardando.set(false);
+        this.modoEdicion.set(false);
+        this.mostrarMensaje('Perfil actualizado correctamente.', false);
+      },
+      error: () => {
+        this.guardando.set(false);
+        this.mostrarMensaje('Error al actualizar el perfil.', true);
+      }
+    });
   }
 
   onLike(publicacionId: string) {

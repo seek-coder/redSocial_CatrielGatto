@@ -1,6 +1,7 @@
 import { Injectable, signal, computed } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 
 export interface Usuario {
@@ -91,6 +92,17 @@ export class AuthService {
         this.cerrarSesion();
       }
     });
+  }
+
+  editarPerfil(formData: FormData): Observable<{ mensaje: string; usuario: Usuario }> {
+    return this.http.post<{ mensaje: string; usuario: Usuario }>(
+      `${environment.apiUrl}/autenticacion/perfil`,
+      formData
+    );
+  }
+
+  actualizarUsuarioLocal(usuario: Usuario) {
+    this.usuarioActual.set(usuario);
   }
 
   cerrarSesion() {
